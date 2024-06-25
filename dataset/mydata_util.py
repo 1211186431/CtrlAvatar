@@ -80,6 +80,6 @@ def render_canonical(mesh_path, save_dir,image_size=512,views = ['front', 'back'
         file_name = 'canonical_'+view + '.png'
         save_path = os.path.join(save_dir, file_name)
         rgb_img.save(save_path)
-    print(f'Saved {view} view at {save_path}')
+        print(f'Saved {view} view at {save_path}')
 
 

@@ -74,10 +74,7 @@ def process_smplx_files(source_dir, destination_dir):
         shutil.copy(file_path, new_file_path)
         print(f'Copied and renamed {file_path} to {new_file_path}')
 
-
-
-if __name__ == '__main__':
-    
+def main():
     subject = '00016'
     image_size = 800
     base_path = '/home/dataset/dataset_0203/'
@@ -87,11 +84,17 @@ if __name__ == '__main__':
     out_dir = os.path.join(out_path, subject)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    out_img_dir = os.path.join(base_path, subject, f'img_gt_{image_size}')
-    out_smplx_dir = os.path.join(base_path, subject, 'smplx_pkl')
+    out_img_dir = os.path.join(out_dir, f'img_gt_{image_size}')
+    out_smplx_dir = os.path.join(out_dir, 'smplx_pkl')
     mesh_list = find_ply_files(data_dir)
     process_smplx_files(data_dir, out_smplx_dir)
     for mesh_path,mesh_name in tqdm.tqdm(mesh_list):
         render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size)
+
+
+
+if __name__ == '__main__':
+    main()
+
 
     
