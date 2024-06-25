@@ -6,7 +6,7 @@ import yaml
 from train import main as train_main
 from test import main as test_main
 from edit import main as edit_main
-
+import argparse
 def seed_everything(seed=42):
     random.seed(seed)
     np.random.seed(seed)
@@ -19,17 +19,17 @@ def merge_with_common(common_config,config):
     merged_config = common_config.copy()
     merged_config.update(config)
     return merged_config
-def main(mode):
+def main(mode,yaml_file_path):
     seed_everything()
-    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
-    yaml_file_path = '/home/mycode2/t0618/config/config.yaml'
     with open(yaml_file_path, 'r') as file:
         combined_config = yaml.safe_load(file)
     common_config = {
         'base_path': combined_config['base_path'],
         'K': combined_config['K'],
-        'subject': combined_config['subject']
+        'subject': combined_config['subject'],
+        'gpu_id': combined_config['gpu_id']
     }
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(common_config['gpu_id'])
     configs = {
         'test': merge_with_common(common_config,combined_config['configs']['test']),
         'edit': merge_with_common(common_config,combined_config['configs']['edit']),
@@ -46,4 +46,10 @@ def main(mode):
         edit_main(edit_config)
 
 if __name__ == '__main__':
-    main(mode='test')
+    parser = argparse.ArgumentParser(description='color')
+    parser.add_argument('--mode', type=str, help='mode', default='train')
+    parser.add_argument('--config', type=str, default='/home/ps/dy/OpenAvatar/config/config.yaml')
+    
+    args = parser.parse_args()
+    
+    main(mode=args.mode, yaml_file_path=args.config)

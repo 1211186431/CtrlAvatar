@@ -3,6 +3,8 @@ import shutil
 import glob
 import tqdm
 from dataset.mydata_util import render_data
+import yaml
+import argparse
 def find_ply_files(base_dir):
     """
     This function finds all .ply files within any 'Take*' subdirectories
@@ -74,16 +76,19 @@ def process_smplx_files(source_dir, destination_dir):
         shutil.copy(file_path, new_file_path)
         print(f'Copied and renamed {file_path} to {new_file_path}')
 
-def main():
-    subject = '00016'
-    image_size = 800
-    base_path = '/home/dataset/dataset_0203/'
-    out_path = '/home/mycode2/t0618/data/'
-    
+def main(config):
+    subject = config['subject']
+    image_size = config['image_size']
+    base_path = config['base_path']
+    out_path = os.path.join(config['out_path'], 'data')
+
     data_dir = os.path.join(base_path, subject, 'train')
     out_dir = os.path.join(out_path, subject)
+    t_mesh_path = os.path.join(out_dir, 't_mesh')
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if not os.path.exists(t_mesh_path):
+        os.makedirs(t_mesh_path)
     out_img_dir = os.path.join(out_dir, f'img_gt_{image_size}')
     out_smplx_dir = os.path.join(out_dir, 'smplx_pkl')
     mesh_list = find_ply_files(data_dir)
@@ -94,7 +99,21 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='color')
+    parser.add_argument('--config', type=str, default='/home/ps/dy/OpenAvatar/config/config.yaml')
+    args = parser.parse_args()
+    yaml_file_path = args.config
+    with open(yaml_file_path, 'r') as file:
+        combined_config = yaml.safe_load(file)
+    config = {
+        'out_path': combined_config['base_path'],
+        'base_path': combined_config['xhuman_path'],
+        'subject': combined_config['subject'],
+        'gpu_id': combined_config['gpu_id'],
+        'image_size': combined_config['configs']['train']['image_size']
+    }
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(config['gpu_id'])
+    main(config)
 
 
     
