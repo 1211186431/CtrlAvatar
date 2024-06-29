@@ -1,20 +1,20 @@
 # combined_config.yaml
 base_path: '/home/ps/dy/OpenAvatar'
 K: 6
-subject: '00020'
+subject: '00017'
 gpu_id: 0
 xhuman_path: '/home/ps/dy/dataset'
 configs:
   test:
-    model_mode: 'edit'
+    model_mode: 'val'
     image_size: 1024
     views:
       - 'front'
     t_mesh_name: '0000_def_1.ply'
-    pkl_dir: '/home/dataset/00016/test/Take1/SMPLX'
-    model_name: 'model_1000.ckpt'
-    need_canonical: False
-    save_type: 'image'
+    pkl_dir: '/home/ps/dy/mycode2/t0627/testpkl'
+    model_name: 'model_300.ckpt'
+    need_canonical: True
+    save_type: 'mesh'
   edit:
     image_size: 1024
     lr: 0.005

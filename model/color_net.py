@@ -33,7 +33,7 @@ class MyColorNet(nn.Module):
             self.load_deformer_weights(pretrained_path=pretrained_path)
             self.load_cond_weights(pretrained_path=pretrained_path)
             self.load_delta_weights(pretrained_path=pretrained_path)
-        self.freeze_model()
+
     def forward(self, x,cond=None):
         color = self.pred_color(x)
         if cond is None:
@@ -55,12 +55,12 @@ class MyColorNet(nn.Module):
         if verts.dim() == 3:
             verts = verts.squeeze(0)
         weights = self.deformer.query_weights(verts[None],
-                                                None).clamp(0, 1)[0]
+                                                    None).clamp(0, 1)[0]
 
         verts_mesh_deformed = skinning(verts.unsqueeze(0),
                                         weights.unsqueeze(0),
-                                        smpl_tfs).data.cpu().numpy()[0]
-        return torch.from_numpy(verts_mesh_deformed).float().unsqueeze(0).to('cuda:0')
+                                        smpl_tfs)
+        return verts_mesh_deformed
     
 
 
@@ -114,7 +114,7 @@ class MyColorNet(nn.Module):
         # 加载权重
         self.delta_net.load_state_dict(adjusted_state_dict)
         
-    def freeze_model(self):
+    def freeze_other_model(self):
         for param in self.deformer.parameters():
             param.requires_grad = False
             

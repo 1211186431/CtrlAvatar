@@ -13,9 +13,9 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from pytorch3d.ops import knn_points
 from model.mynetutil import weighted_color_average
-import yaml
 
 def train(model, dataloader, optimizer, renderers, num_epochs,mesh_data,pre_train=False):
+    model.freeze_other_model()
     model.train()
     for epoch in range(num_epochs):
         for i, data in enumerate(dataloader):

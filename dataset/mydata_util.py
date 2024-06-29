@@ -26,6 +26,22 @@ class Renderer:
     def render_mesh(self, mesh):
         image_color = self.renderer(mesh)
         return image_color
+    
+    def render_mesh_depth(self, mesh):
+        fragments = self.rasterizer(mesh)
+        depth_map = fragments.zbuf.squeeze()
+        depth_map[depth_map == float('inf')] = depth_map[depth_map != float('inf')].max()
+        depth_map[depth_map == -float('inf')] = depth_map[depth_map != -float('inf')].min()
+    
+        # 归一化深度图到0-1
+        min_val = depth_map.min()
+        max_val = depth_map.max()
+        
+        if max_val > min_val:  # 避免分母为零
+            depth_map = (depth_map - min_val) / (max_val - min_val)
+        else:
+            depth_map = torch.zeros_like(depth_map)
+        return depth_map[:,:,0]
 
 def load_mesh(path):
     mesh = trimesh.load(path)
@@ -66,6 +82,7 @@ def render_data(mesh_path, save_dir,save_name,image_size=512):
     for view in views:
         renderer = Renderer(view=view, image_size=image_size)
         img_pred_def = render_pic(renderer, mesh)
+        ## 第4维是透明度
         rgb_img = Image.fromarray(img_pred_def[:, :, :3])
         file_name = save_name+'_'+view + '_gt.png'
         save_path = os.path.join(save_dir, file_name)

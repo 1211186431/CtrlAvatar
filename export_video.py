@@ -3,7 +3,7 @@ import subprocess
 import os
 
 # 定义YAML文件的路径
-yaml_file_path = '/home/mycode2/t0618/config/config.yaml'
+yaml_file_path = '/home/ps/dy/OpenAvatar/config/config.yaml'
 
 # 读取YAML文件
 with open(yaml_file_path, 'r') as file:
