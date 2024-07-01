@@ -40,6 +40,30 @@ def find_ply_files(base_dir):
     
     return results
 
+def find_obj_files(base_dir):
+
+    # Build the search pattern to find all 'Take*' directories
+    search_pattern = os.path.join(base_dir, 'Take*/meshes_obj/*.obj')
+    # Use glob to find all files that match this pattern
+    ply_files = glob.glob(search_pattern)
+    
+    results = []
+    for file_path in ply_files:
+        # Extract Take number and mesh number from the file path
+        parts = file_path.split('/')
+        take_part = parts[-3]  # Example part: 'Take6'
+        mesh_part = parts[-1]  # Example part: 'mesh-f00076.ply'
+        
+        # Extract numbers from these parts
+        take_number = take_part[4:]  # Extract number after 'Take'
+        mesh_number = mesh_part.split('-f')[1].split('.')[0]  # Extract number after '-f' and before '.ply'
+        
+        # Format the string as required
+        formatted_string = f'mesh_{take_number}_{mesh_number}'
+        results.append((file_path, formatted_string))
+    
+    return results
+
 
 
 def process_smplx_files(source_dir, destination_dir):
@@ -92,9 +116,16 @@ def main(config):
     out_img_dir = os.path.join(out_dir, f'img_gt_{image_size}')
     out_smplx_dir = os.path.join(out_dir, 'smplx_pkl')
     mesh_list = find_ply_files(data_dir)
+    obj_list = find_obj_files(data_dir)
     process_smplx_files(data_dir, out_smplx_dir)
-    for mesh_path,mesh_name in tqdm.tqdm(mesh_list):
-        render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size)
+    if len(obj_list) != 0:
+        print("rendering obj files")
+        for mesh_path,mesh_name in tqdm.tqdm(obj_list):
+            render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True)
+    else:
+        print("rendering ply files")
+        for mesh_path,mesh_name in tqdm.tqdm(mesh_list):
+            render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size)
 
 
 

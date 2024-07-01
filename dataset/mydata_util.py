@@ -8,6 +8,7 @@ from pytorch3d.renderer import FoVOrthographicCameras, PointLights, Rasterizatio
 from pytorch3d.renderer import MeshRenderer, MeshRasterizer, HardPhongShader
 from pytorch3d.structures import Meshes
 from pytorch3d.renderer.mesh import Textures
+from pytorch3d.io import load_objs_as_meshes
 class Renderer:
     def __init__(self, view, image_size=512,is_canonical=False):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -74,14 +75,24 @@ def render_pic(renderer, mesh):
     image = (255 * image).data.cpu().numpy().astype(np.uint8)
     return image
 
-def render_data(mesh_path, save_dir,save_name,image_size=512):
+def render_obj(mesh_path, renderer):
+    mesh = load_objs_as_meshes([mesh_path], device='cuda')
+    image = renderer.render_mesh(mesh)[0]
+    image = (255 * image).data.cpu().numpy().astype(np.uint8)
+    return image
+
+
+def render_data(mesh_path, save_dir,save_name,image_size=512,is_obj=False):
     mesh = trimesh.load(mesh_path)
     views = ['front', 'back', 'left', 'right']
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     for view in views:
         renderer = Renderer(view=view, image_size=image_size)
-        img_pred_def = render_pic(renderer, mesh)
+        if is_obj:
+            img_pred_def = render_obj(mesh_path, renderer)
+        else:
+            img_pred_def = render_pic(renderer, mesh)
         ## 第4维是透明度
         rgb_img = Image.fromarray(img_pred_def[:, :, :3])
         file_name = save_name+'_'+view + '_gt.png'

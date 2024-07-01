@@ -1,7 +1,7 @@
 # combined_config.yaml
 base_path: '/home/ps/dy/OpenAvatar'
 K: 6
-subject: '00017'
+subject: '00034'
 gpu_id: 0
 xhuman_path: '/home/ps/dy/dataset'
 configs:

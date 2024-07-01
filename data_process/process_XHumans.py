@@ -57,11 +57,15 @@ def main(args):
             smplx_path = os.path.join(path, "SMPLX")
             new_smplx_path = os.path.join(new_directory_path, take, "SMPLX")
             mesh_path = os.path.join(path, "meshes_ply")
+            obj_path = os.path.join(path, "meshes_obj")
+            
             new_mesh_path = os.path.join(new_directory_path, take, "meshes_ply")
+            new_obj_path = os.path.join(new_directory_path, take, "meshes_obj")
             png_files, number_of_png_files = list_and_count_files(file_path=img_path,file_type="*.png")
             smplx_pkl_files, number_of_smplx_pkl_files = list_and_count_files(file_path=smplx_path,file_type="*.pkl")
             smplx_files, number_of_smplx_files = list_and_count_files(file_path=smplx_path,file_type="*.ply")
             mesh_files, number_of_mesh_files = list_and_count_files(file_path=mesh_path,file_type="*.ply")
+            obj_files, number_of_obj_files = list_and_count_files(file_path=obj_path,file_type="*.obj")
             if data_type == "train":
                 num_list = [75,90,105,120]
             elif data_type == "test":
@@ -88,6 +92,17 @@ def main(args):
                 mesh_file = mesh_file_path.split("/")[-1]
                 new_mesh_file_path = os.path.join(new_mesh_path, mesh_file)
                 move_file(mesh_file_path,new_mesh_file_path)
+                
+                obj_file_path = obj_files[num]
+                obj_file = obj_file_path.split("/")[-1]
+                jpg_file = os.path.join(obj_file.replace("mesh-","atlas-").replace(".obj",".jpg"))
+                mtl_file = obj_file.replace(".obj",".mtl")
+                new_obj_file_path = os.path.join(new_obj_path, obj_file)
+                new_jpg_file_path = os.path.join(new_obj_path, jpg_file)
+                new_mtl_file_path = os.path.join(new_obj_path, mtl_file)
+                move_file(obj_file_path,new_obj_file_path)
+                move_file(obj_file_path.replace("mesh-","atlas-").replace(".obj",".jpg"),new_jpg_file_path)
+                move_file(obj_file_path.replace(".obj",".mtl"),new_mtl_file_path)
                 
 
 if __name__ == "__main__":

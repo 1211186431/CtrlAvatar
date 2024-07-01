@@ -1,8 +1,14 @@
 # OpenAvatar
-## init
+## pre data
+对于XHumans数据集
 1.运行脚本
 ```
 python mypre_data.py --config /home/ps/dy/OpenAvatar/config/config.yaml
+```
+
+对于CustomHumans数据集
+```
+python dataset/process_CustomHumans.py  --base_path /home/ps/dy/c_data/CustomHumans  --out_dir_path /home/ps/dy/mycode2/t0628 --subject 00017 --gender male --test_len 2
 ```
 
 2.复制 smplx_model
