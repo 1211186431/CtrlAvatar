@@ -15,7 +15,8 @@ import yaml
 def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,save_type='img'):
     model.eval()
     with torch.no_grad():
-        pred_colors = model.pred_color(mesh_data['verts'])
+        input_data = torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2)
+        pred_colors = model.pred_color(input_data)
         pred_colors = weighted_color_average(point_color=pred_colors[0], index=mesh_data['idx'][0], distances=mesh_data['distances'][0]).unsqueeze(0)
         for i in tqdm.tqdm(range(len(smplx_params_list))):
             smplx_params = smplx_params_list[i]
@@ -58,13 +59,13 @@ def main(config):
     renderers = setup_views(image_size=image_size,views=views)
 
 
-    verts,faces = load_mesh(mesh_path)
+    verts,faces,normals = load_mesh(mesh_path)
     meta_info = load_meta_info(meta_info_path)
     distances, idx,nn = knn_points(verts, verts, K=K)
     test_smplx_params = load_smplx_params(pkl_dir,meta_info)
-    model = MyColorNet(meta_info,None,smplx_model_path).cuda()
+    model = MyColorNet(meta_info,None,smplx_model_path,d_in_color=6).cuda()
     model.load_state_dict(torch.load(model_path))
-    mesh_data={'verts':verts,'faces':faces,'distances':distances,'idx':idx,'nn':nn}
+    mesh_data={'verts':verts,'faces':faces,'normals':normals,'distances':distances,'idx':idx,'nn':nn}
 
 
     smplx_params_list = []
@@ -84,7 +85,8 @@ def main(config):
     if need_canonical:
         ## 保存tpose 颜色
         torch.cuda.empty_cache()
-        pred_colors = model.pred_color(verts)
+        
+        pred_colors = model.pred_color(torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2))
         pred_colors = weighted_color_average(point_color=pred_colors[0], index=idx[0], distances=distances[0]).unsqueeze(0)
         save_mesh(verts, faces, torch.clamp(pred_colors, 0.0, 1.0), mesh_path.replace(t_mesh_name,'mesh_pred.ply'))
         render_canonical(mesh_path.replace(t_mesh_name,'mesh_pred.ply'),save_dir=os.path.join(base_path, 'data',subject,'t_mesh'),image_size=image_size,views=['front', 'back'])

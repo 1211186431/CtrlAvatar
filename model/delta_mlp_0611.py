@@ -21,7 +21,7 @@ class condNet(nn.Module):
         input_emb = self.embed_fn(x)
         body_emb = self.softplus(self.cond_mlp1(cond))
         body_emb = self.softplus(self.cond_mlp2(body_emb))
-        body_emb = self.softplus(self.cond_mlp3(body_emb))
+        body_emb = self.cond_mlp3(body_emb)
         body_emb = body_emb.unsqueeze(1).repeat(1,N,1)
         cond1 = input_emb*body_emb
         inputs = torch.cat([cond1,body_emb], dim=-1)

@@ -2,7 +2,7 @@ import os
 import shutil
 import glob
 import argparse
-
+import tqdm
 def list_and_count_files(file_path,file_type):
     pattern = os.path.join(file_path, file_type)
     files = glob.glob(pattern)
@@ -27,9 +27,10 @@ def move_file(src_path, dest_path):
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
     
-    # Move the file
-    shutil.copy(src_path, dest_path)
-    print(f"File moved from {src_path} to {dest_path}.")
+    # Check if the destination file already exists
+    if not os.path.exists(dest_path):
+        # Move the file
+        shutil.copy(src_path, dest_path)
 
 
 
@@ -50,12 +51,14 @@ def main(args):
         directory_path = os.path.join(base_path,data_num,data_type)
         new_directory_path = os.path.join(new_base_path,data_num,data_type)
         subdirectories = [d for d in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, d))]
-        for take in sorted(subdirectories):
+        for take in tqdm.tqdm(sorted(subdirectories)):
             path = os.path.join(directory_path, take)
             img_path = os.path.join(path, "render/image")
             new_img_path = os.path.join(new_directory_path, take, "render/image")
             smplx_path = os.path.join(path, "SMPLX")
             new_smplx_path = os.path.join(new_directory_path, take, "SMPLX")
+            smpl_path = os.path.join(path, "SMPL")
+            new_smpl_path = os.path.join(new_directory_path, take, "SMPL")
             mesh_path = os.path.join(path, "meshes_ply")
             obj_path = os.path.join(path, "meshes_obj")
             
@@ -64,6 +67,8 @@ def main(args):
             png_files, number_of_png_files = list_and_count_files(file_path=img_path,file_type="*.png")
             smplx_pkl_files, number_of_smplx_pkl_files = list_and_count_files(file_path=smplx_path,file_type="*.pkl")
             smplx_files, number_of_smplx_files = list_and_count_files(file_path=smplx_path,file_type="*.ply")
+            smpl_pkl_files, number_of_smpl_pkl_files = list_and_count_files(file_path=smpl_path,file_type="*.pkl")
+            smpl_files, number_of_smpl_files = list_and_count_files(file_path=smpl_path,file_type="*.ply")
             mesh_files, number_of_mesh_files = list_and_count_files(file_path=mesh_path,file_type="*.ply")
             obj_files, number_of_obj_files = list_and_count_files(file_path=obj_path,file_type="*.obj")
             if data_type == "train":
@@ -87,6 +92,16 @@ def main(args):
                 smplx_file = smplx_file_path.split("/")[-1]
                 new_smplx_file_path = os.path.join(new_smplx_path, smplx_file)
                 move_file(smplx_file_path,new_smplx_file_path)
+                
+                smpl_pkl_file_path = smpl_pkl_files[num]
+                smpl_pkl_file = smpl_pkl_file_path.split("/")[-1]
+                new_smpl_pkl_file_path = os.path.join(new_smpl_path, smpl_pkl_file)
+                move_file(smpl_pkl_file_path,new_smpl_pkl_file_path)
+                
+                smpl_file_path = smpl_files[num]
+                smpl_file = smpl_file_path.split("/")[-1]
+                new_smpl_file_path = os.path.join(new_smpl_path, smpl_file)
+                move_file(smpl_file_path,new_smpl_file_path)
                 
                 mesh_file_path = mesh_files[num]
                 mesh_file = mesh_file_path.split("/")[-1]

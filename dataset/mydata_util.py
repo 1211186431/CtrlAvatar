@@ -48,7 +48,8 @@ def load_mesh(path):
     mesh = trimesh.load(path)
     verts = torch.tensor(mesh.vertices, device='cuda', dtype=torch.float32)[None]
     faces = torch.tensor(mesh.faces, device='cuda')[None]
-    return verts,faces
+    normals = torch.tensor(mesh.vertex_normals, device='cuda', dtype=torch.float32)[None]
+    return verts,faces,normals
 
 def load_images(view_images):
     images = {}

@@ -99,24 +99,41 @@ def process_smplx_files(source_dir, destination_dir):
         # Copy and rename the file
         shutil.copy(file_path, new_file_path)
         print(f'Copied and renamed {file_path} to {new_file_path}')
+def process_ckpt_files(source_dir, out_dir):
+    source_meta_info_path = os.path.join(source_dir, 'meta_info.npz')
+    source_ckpt_path = os.path.join(source_dir, 'checkpoints','last.ckpt')
+    source_t_mesh = os.path.join(source_dir, 't_mesh.ply')
+    
+    out_meta_info_path = os.path.join(out_dir, 'meta_info.npz')
+    out_ckpt_path = os.path.join(out_dir, 'last.ckpt')
+    t_mesh_path = os.path.join(out_dir, 't_mesh')
+    if not os.path.exists(t_mesh_path):
+        os.makedirs(t_mesh_path)
+    out_t_mesh_path = os.path.join(t_mesh_path, 't_mesh.ply')
+    shutil.copy(source_t_mesh, out_t_mesh_path)
+    shutil.copy(source_meta_info_path, out_meta_info_path)
+    shutil.copy(source_ckpt_path, out_ckpt_path)
+    print(f'Copied {source_meta_info_path} to {out_meta_info_path}')
+    print(f'Copied {source_ckpt_path} to {out_ckpt_path}')
+    print(f'Copied {source_t_mesh} to {out_t_mesh_path}')
+
 
 def main(config):
     subject = config['subject']
     image_size = config['image_size']
     base_path = config['base_path']
     out_path = os.path.join(config['out_path'], 'data')
-
+    geometry_model_path = config['geometry_model_path']
+    
     data_dir = os.path.join(base_path, subject, 'train')
     out_dir = os.path.join(out_path, subject)
-    t_mesh_path = os.path.join(out_dir, 't_mesh')
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    if not os.path.exists(t_mesh_path):
-        os.makedirs(t_mesh_path)
     out_img_dir = os.path.join(out_dir, f'img_gt_{image_size}')
     out_smplx_dir = os.path.join(out_dir, 'smplx_pkl')
     mesh_list = find_ply_files(data_dir)
     obj_list = find_obj_files(data_dir)
+    process_ckpt_files(geometry_model_path, out_dir)
     process_smplx_files(data_dir, out_smplx_dir)
     if len(obj_list) != 0:
         print("rendering obj files")
@@ -141,7 +158,8 @@ if __name__ == '__main__':
         'base_path': combined_config['xhuman_path'],
         'subject': combined_config['subject'],
         'gpu_id': combined_config['gpu_id'],
-        'image_size': combined_config['configs']['train']['image_size']
+        'image_size': combined_config['configs']['train']['image_size'],
+        'geometry_model_path': combined_config['geometry_model_path'],
     }
     os.environ["CUDA_VISIBLE_DEVICES"] = str(config['gpu_id'])
     main(config)

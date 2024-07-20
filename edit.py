@@ -20,7 +20,8 @@ def train(model,optimizer, renderers,images,mesh_data,num_epochs=1000):
         optimizer.zero_grad()
         loss = 0 
         img_dict ={}
-        pred_colors = model(mesh_data['verts'])
+        input_data = torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2)
+        pred_colors = model.pred_color(input_data)
         pred_colors = weighted_color_average(point_color=pred_colors[0], index=mesh_data['idx'][0], distances=mesh_data['distances'][0]).unsqueeze(0)
         mesh_albido = Meshes(mesh_data['verts'],mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
         
@@ -61,14 +62,15 @@ def main(config):
     back_img_path = os.path.join(base_path, 'data',subject,'t_mesh','canonical_back.png')
     img_gt={'front':load_img(front_img_path)[1],'back':load_img(back_img_path)[1]}
 
-    verts,faces = load_mesh(mesh_path)
+    verts,faces,normals = load_mesh(mesh_path)
     renderers = setup_views(views = ['front', 'back'],image_size=image_size,is_canonical=True)
     model_path = os.path.join(base_path, 'outputs','val',subject,'save_model',model_name)
-    model = MyColorNet(meta_info=meta_info,smpl_model_path=smplx_model_path).cuda()
+    model = MyColorNet(meta_info=meta_info,smpl_model_path=smplx_model_path,d_in_color=6).cuda()
     model.load_state_dict(torch.load(model_path))
+    model.freeze_other_model()
     distances, idx,nn = knn_points(verts, verts, K=K)
     optimizer = optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999)) 
-    mesh_data={'verts':verts,'faces':faces,'distances':distances,'idx':idx,'nn':nn,'val_img_dir':val_img_dir,'val_mesh_dir':val_mesh_dir,'model_save_dir':model_save_dir}
+    mesh_data={'verts':verts,'faces':faces,'normals':normals,'distances':distances,'idx':idx,'nn':nn,'val_img_dir':val_img_dir,'val_mesh_dir':val_mesh_dir,'model_save_dir':model_save_dir}
     train(model=model,optimizer=optimizer, renderers=renderers,images=img_gt,mesh_data=mesh_data,num_epochs=num_epochs)
 
 

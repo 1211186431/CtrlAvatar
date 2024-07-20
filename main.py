@@ -47,7 +47,7 @@ def main(mode,yaml_file_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='color')
-    parser.add_argument('--mode', type=str, help='mode', default='train')
+    parser.add_argument('--mode', type=str, help='mode', default='edit')
     parser.add_argument('--config', type=str, default='/home/ps/dy/OpenAvatar/config/config.yaml')
     
     args = parser.parse_args()
