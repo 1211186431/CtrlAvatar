@@ -1,7 +1,7 @@
 import torch.optim as optim
 import torch
 import os
-from myloss import img_loss
+from myloss import img_loss,loss_3d
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
@@ -26,20 +26,21 @@ def train(model, dataloader, optimizer, renderers, num_epochs,mesh_data,pre_trai
             smpl_tfs = smplx_data['smpl_tfs']
             cond = get_cond(smplx_params)
             input_data = torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2)
-            if cond is None:
+            if data['def_points'] is not None:
                 pred_colors = model(input_data)
-                def_verts = model.deform(mesh_data['verts'],smpl_tfs)
-                pred_colors = weighted_color_average(point_color=pred_colors[0], index=mesh_data['idx'][0], distances=mesh_data['distances'][0]).unsqueeze(0)
+                def_verts = data['def_points']
             else:
                 pred_colors,pts_c = model(input_data,cond)
                 def_verts = model.deform(pts_c,smpl_tfs)
-                pred_colors = weighted_color_average(point_color=pred_colors[0], index=mesh_data['idx'][0], distances=mesh_data['distances'][0]).unsqueeze(0)
+            pred_colors = weighted_color_average(point_color=pred_colors[0], index=mesh_data['idx'][0], distances=mesh_data['distances'][0]).unsqueeze(0)
                 
             mesh_albido = Meshes(def_verts,mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
             loss = 0
-            for i ,(view,renderer) in enumerate(renderers.items()):
+            pred_loss_3d = loss_3d(pred_colors,data['def_color'],data['label_idx'])
+            loss += pred_loss_3d
+            for j ,(view,renderer) in enumerate(renderers.items()):
                 pred_img = render_trimesh(mesh_albido, renderer)
-                loss += img_loss(pred_img[:,:,:3], images[i]) * (1/len(renderers))
+                loss += img_loss(pred_img[:,:,:3], images[j]) * (1/len(renderers))
             loss.backward()
             optimizer.step()
             
@@ -70,8 +71,6 @@ def main(config):
 
     mesh_path = os.path.join(base_path, 'data',subject,'t_mesh',t_mesh_name)
     meta_info_path = os.path.join(base_path, 'data',subject,'meta_info.npz')
-    pkl_dir = os.path.join(base_path, 'data',subject,'smplx_pkl')
-    img_dir = os.path.join(base_path, 'data',subject,'img_gt_'+str(image_size))
     deformer_model_path = os.path.join(base_path, 'data',subject,'last.ckpt')
     smplx_model_path = os.path.join(base_path, 'model/smplx/smplx_model')
 
@@ -91,7 +90,7 @@ def main(config):
     renderers = setup_views(image_size=image_size)
     meta_info = load_meta_info(meta_info_path)
     model = MyColorNet(meta_info,deformer_model_path,smplx_model_path,d_in_color=6).cuda()
-    dataset = MyDataset(pkl_dir=pkl_dir, img_dir=img_dir,meta_info=meta_info)
+    dataset = MyDataset(base_path=base_path,subject=subject,meta_info=meta_info,image_size=image_size)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
     distances, idx,nn = knn_points(verts, verts, K=K)
     optimizer = optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999))

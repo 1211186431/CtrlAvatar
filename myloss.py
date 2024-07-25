@@ -25,11 +25,8 @@ class PerceptualLoss(nn.Module):
             param.requires_grad = False
 
     def forward(self, x, y):
-        scale_factor = 0.8  
-        x_down = downsample_image(x, scale_factor)
-        y_down = downsample_image(y, scale_factor)
-        x_vgg = self.features(x_down)
-        y_vgg = self.features(y_down)
+        x_vgg = self.features(x)
+        y_vgg = self.features(y)
         loss = torch.mean((x_vgg - y_vgg) ** 2)
         return loss
 
@@ -71,3 +68,17 @@ def img_loss(pred_img, gt_img):
     perceptual_loss = perceptualloss(x, y)
     loss = 100*l1_loss+(1-ssim_avg)*50 + 5*perceptual_loss
     return loss
+
+def loss_3d(pred_color, def_color,label_idx): 
+    left_hand_def_color = def_color[0][label_idx['lhand']]
+    right_hand_def_color = def_color[0][label_idx['rhand']]
+    face_def_color = def_color[0][label_idx['face']]
+    
+    left_hand_pred_color = pred_color[0][label_idx['lhand']]
+    right_hand_pred_color = pred_color[0][label_idx['rhand']]
+    face_pred_color = pred_color[0][label_idx['face']]
+    
+    l1_loss_hand = F.l1_loss(left_hand_def_color, left_hand_pred_color) + F.l1_loss(right_hand_def_color, right_hand_pred_color)
+    l1_loss_face = F.l1_loss(face_def_color, face_pred_color)
+    loss_3d = 2*l1_loss_hand + l1_loss_face
+    return loss_3d

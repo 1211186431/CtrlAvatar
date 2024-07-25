@@ -1,0 +1,30 @@
+# combined_config.yaml
+base_path: '/home/ps/dy/OpenAvatar'
+K: 6
+subject: '00018'
+gpu_id: 0
+xhuman_path: '/home/ps/dy/dataset'
+geometry_model_path: '/home/ps/dy/X-Avatar/outputs/XHumans_smplx/00018_delta'
+configs:
+  test:
+    model_mode: 'val'
+    image_size: 800
+    views:
+      - 'front'
+    t_mesh_name: 't_mesh.ply'
+    pkl_dir: '/home/ps/dy/dataset/00016/test/Take1/SMPLX'
+    model_name: 'model_260.ckpt'
+    need_canonical: True
+    save_type: 'image'  # 'image' or 'mesh'
+  edit:
+    image_size: 800
+    lr: 0.005
+    num_epochs: 1000
+    t_mesh_name: 'mesh_pred.ply'
+    model_name: 'model_260.ckpt'
+  train:
+    image_size: 800
+    pre_num_epochs: 200
+    num_epochs: 500
+    lr: 0.005
+    t_mesh_name: 't_mesh.ply'

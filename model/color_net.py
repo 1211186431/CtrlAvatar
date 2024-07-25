@@ -26,7 +26,7 @@ class MyColorNet(nn.Module):
                 param.requires_grad = False
         self.deformer = ForwardDeformer(d_out=59,model_type='smplx')
         self.delta_net = ImplicitNetwork(d_in=54,d_out=3,skip_layer=[3],depth=4,width=256,multires=0,geometric_init=False)
-        self.color_net = ImplicitNetwork(d_in=d_in_color,d_out=3,skip_layer=[3],depth=6,width=256,multires=10,geometric_init=False)
+        self.color_net = ImplicitNetwork(d_in=d_in_color,d_out=3,skip_layer=[4],depth=8,width=256,multires=10,geometric_init=False)
         self.cond_net = condNet(cond_dim=73)
         self.sigmoid = torch.nn.Sigmoid()
         if pretrained_path is not None:
