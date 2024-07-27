@@ -33,7 +33,7 @@ def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,sa
                 save_img(pred_img, save_dir + f'/test_{i}.png')
             if save_type == 'mesh':
                 ## 保存mesh， 4fps 如果不保存 可以达到45fps
-                save_mesh(def_verts, mesh_data['faces'], torch.clamp(pred_colors, 0.0, 1.0), save_dir + f'/mesh_pred_{i}.ply')
+                save_mesh(def_verts, mesh_data['faces'], torch.clamp(pred_colors, 0.0, 1.0), save_dir + f'/{i:04d}_def.ply')
 
 def main(config):
     base_path = config['base_path']

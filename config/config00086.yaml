@@ -7,13 +7,13 @@ xhuman_path: '/home/ps/dy/dataset'
 geometry_model_path: '/home/ps/dy/X-Avatar/outputs/XHumans_smplx/00086_delta'
 configs:
   test:
-    model_mode: 'fit'
+    model_mode: 'val'
     image_size: 1024
     views:
       - 'front'
     t_mesh_name: 't_mesh.ply'
-    pkl_dir: '/home/ps/dy/mycode2/t0717/00088_107'
-    model_name: 'model_50.ckpt'
+    pkl_dir: '/home/ps/dy/dataset/00086/test'
+    model_name: 'model_500.ckpt'
     need_canonical: True
     save_type: 'mesh'  # 'image' or 'mesh'
   edit:

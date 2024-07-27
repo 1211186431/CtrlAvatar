@@ -2,11 +2,16 @@
 ## pre data
 对于XHumans数据集
 
-0. 修改config文件中 ```geometry_model_path```为XAvatar输出路径
+1. 修改config文件中 
 
-1. 运行脚本
+geometry_model_path: XAvatar输出路径
+
+xhuman_path: 
+
+
+2. 运行脚本
 ```
-python mypre_data.py --config /home/ps/dy/OpenAvatar/config/config.yaml
+bash script/pre_data.sh
 ```
 
 对于CustomHumans数据集
@@ -14,7 +19,7 @@ python mypre_data.py --config /home/ps/dy/OpenAvatar/config/config.yaml
 python dataset/process_CustomHumans.py  --base_path /home/ps/dy/c_data/CustomHumans  --out_dir_path /home/ps/dy/mycode2/t0628 --subject 00017 --gender male --test_len 2
 ```
 
-2. 复制 smplx_model
+3. 复制 smplx_model
 
 
 ## train
@@ -31,8 +36,13 @@ python main.py --mode train --config /home/ps/dy/OpenAvatar/config/config.yaml
 3. 修改 pkl_dir 为 xhuman中对应的 SMPLX 文件夹
 
 ```
-python main.py --mode test --config /home/ps/dy/OpenAvatar/config/config.yaml
+bash script/test.sh
 ```
+
+## eval
+1. eval0722
+
+2. eval
 
 ## export video 
 1. 切换到有 ffmpeg的环境

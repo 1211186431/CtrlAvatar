@@ -41,7 +41,7 @@ def main(args):
     if is_gt:
         eval_data = eval(data_path,config,True,subject,)
     else:
-        config["is_obj"]=True
+        config["is_obj"]=False
         eval_data = eval(data_path,config,False)
     np.save(os.path.join(out_dir,method+"_"+subject+".npy"),eval_data)
 

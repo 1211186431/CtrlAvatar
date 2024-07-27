@@ -7,6 +7,7 @@ from .split_scan import set_color
 import trimesh
 import joblib
 import random
+import glob
 class MyDataset(Dataset):
     def __init__(self, base_path,subject,meta_info,image_size=256,sample_num=None):
         """
@@ -70,6 +71,17 @@ class MyDataset(Dataset):
 def load_smplx_params(pkl_dir,meta_info):
     pkl_files = [f for f in os.listdir(pkl_dir) if f.endswith('.pkl')]
     pkl_files.sort()
+    smplx_params_list = []
+    for pkl_file in pkl_files:
+        pkl_path = os.path.join(pkl_dir, pkl_file)
+        smplx_params = load_smplx_data(meta_info, pkl_path)
+        smplx_params_list.append(smplx_params)
+    if len(smplx_params_list) == 0:
+        return load_smplx_params_text(pkl_dir,meta_info)
+    return torch.stack(smplx_params_list)
+
+def load_smplx_params_text(pkl_dir,meta_info):
+    pkl_files = sorted(glob.glob(os.path.join(pkl_dir, '*', "SMPLX", '*.pkl')))
     smplx_params_list = []
     for pkl_file in pkl_files:
         pkl_path = os.path.join(pkl_dir, pkl_file)
