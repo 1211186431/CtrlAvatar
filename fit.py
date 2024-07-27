@@ -1,7 +1,7 @@
 import torch.optim as optim
 import torch
 import os
-from myloss import img_loss,loss_3d
+from myloss import fit_loss,loss_3d
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
@@ -40,7 +40,7 @@ def fit(model, dataloader, optimizer, renderers, num_epochs,mesh_data):
             loss += pred_loss_3d
             for j ,(view,renderer) in enumerate(renderers.items()):
                 pred_img = render_trimesh(mesh_albido, renderer)
-                loss += img_loss(pred_img[:,:,:3], images[j]) * (1/len(renderers))
+                loss += fit_loss(pred_img[:,:,:3], images[j]) * (1/len(renderers))
             loss.backward()
             optimizer.step()
             
@@ -81,9 +81,10 @@ def main(config):
     renderers = setup_views(image_size=image_size)
     meta_info = load_meta_info(meta_info_path)
     model = MyColorNet(meta_info,deformer_model_path,smplx_model_path,d_in_color=6).cuda()
-    model.load_state_dict(torch.load(init_model_path))
+    model_path = os.path.join(base_path, 'outputs',"val",subject,'save_model',init_model_path)
+    model.load_state_dict(torch.load(model_path))
     dataset = MyDataset(base_path=base_path,subject=subject,meta_info=meta_info,image_size=image_size)
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
+    dataloader = DataLoader(dataset, batch_size=1)
     distances, idx,nn = knn_points(verts, verts, K=K)
     optimizer = optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999))
     writer = SummaryWriter(log_dir) 

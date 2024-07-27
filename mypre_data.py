@@ -139,14 +139,13 @@ def process_def_mesh(source_dir):
             def_verts = model.deform(verts,smpl_tfs)
             mesh = trimesh.Trimesh(vertices=def_verts[0].cpu().numpy(), faces=t_mesh.faces)
             mesh.export(pkl_file.replace('smplx_pkl', 'def_mesh').replace('smplx','def').replace('.pkl', '.ply'))
-    # print(smplx_pkl)
     
 
 
 
 def main(config):
     subject = config['subject']
-    image_size = config['image_size']
+    image_size_list = config['image_size']
     base_path = config['base_path']
     out_path = os.path.join(config['out_path'], 'data')
     geometry_model_path = config['geometry_model_path']
@@ -155,7 +154,6 @@ def main(config):
     out_dir = os.path.join(out_path, subject)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    out_img_dir = os.path.join(out_dir, f'img_gt_{image_size}')
     out_smplx_dir = os.path.join(out_dir, 'smplx_pkl')
     out_smplx_ply_dir = os.path.join(out_dir, 'smplx_ply')
     out_gt_dir = os.path.join(out_dir, 'gt_ply')
@@ -163,14 +161,12 @@ def main(config):
     obj_list = find_obj_files(data_dir)
     process_ckpt_files(geometry_model_path, out_dir)
     process_smplx_files(data_dir, out_smplx_dir,out_smplx_ply_dir)
-    if len(obj_list) != 0:
-        print("rendering obj files")
-        for mesh_path,mesh_name in tqdm.tqdm(obj_list):
-            render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True)
-    else:
-        print("rendering ply files")
-        for mesh_path,mesh_name in tqdm.tqdm(mesh_list):
-            render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size)
+    for image_size in image_size_list:
+        out_img_dir = os.path.join(out_dir, f'img_gt_{image_size}')
+        if len(obj_list) != 0:
+            print("rendering obj files in "+str(image_size))
+            for mesh_path,mesh_name in tqdm.tqdm(obj_list):
+                render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True)
     process_gt_files(data_dir,out_gt_dir)
     process_def_mesh(out_dir)
 
@@ -181,14 +177,18 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='/home/ps/dy/OpenAvatar/config/config00041.yaml')
     args = parser.parse_args()
     yaml_file_path = args.config
+    model_list = ['test','train','fit']
+    image_size = set()
     with open(yaml_file_path, 'r') as file:
         combined_config = yaml.safe_load(file)
+    for model in model_list:
+        image_size.add(combined_config['configs'][model]['image_size'])
     config = {
         'out_path': combined_config['base_path'],
         'base_path': combined_config['xhuman_path'],
         'subject': combined_config['subject'],
         'gpu_id': combined_config['gpu_id'],
-        'image_size': combined_config['configs']['train']['image_size'],
+        'image_size': image_size,
         'geometry_model_path': combined_config['geometry_model_path'],
     }
     os.environ["CUDA_VISIBLE_DEVICES"] = str(config['gpu_id'])

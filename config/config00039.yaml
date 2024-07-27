@@ -1,10 +1,10 @@
 # combined_config.yaml
 base_path: '/home/ps/dy/OpenAvatar'
 K: 6
-subject: '00041'
+subject: '00039'
 gpu_id: 0
 xhuman_path: '/home/ps/dy/dataset'
-geometry_model_path: '/home/ps/dy/X-Avatar/outputs/XHumans_smplx/00041_delta'
+geometry_model_path: '/home/ps/dy/X-Avatar/outputs/XHumans_smplx/00039_delta'
 configs:
   test:
     model_mode: 'fit'

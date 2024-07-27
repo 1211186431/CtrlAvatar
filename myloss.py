@@ -82,3 +82,18 @@ def loss_3d(pred_color, def_color,label_idx):
     l1_loss_face = F.l1_loss(face_def_color, face_pred_color)
     loss_3d = 5*l1_loss_hand + l1_loss_face
     return loss_3d
+
+
+def fit_loss(pred_img, gt_img):
+    l1_loss = F.l1_loss(pred_img, gt_img)
+    x = pred_img.unsqueeze(0).permute(0, 3, 1, 2)
+    y = gt_img.unsqueeze(0).permute(0, 3, 1, 2)
+    ssim_r = ssim(x[:, 0:1, :, :], y[:, 0:1, :, :])
+    ssim_g = ssim(x[:, 1:2, :, :], y[:, 1:2, :, :])
+    ssim_b = ssim(x[:, 2:3, :, :], y[:, 2:3, :, :])
+
+    # Average SSIM over all channels
+    ssim_avg = (ssim_r + ssim_g + ssim_b) / 3
+    perceptual_loss = perceptualloss(x, y)
+    loss = 100*l1_loss+(1-ssim_avg)*10 + perceptual_loss*20
+    return loss

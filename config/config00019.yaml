@@ -7,24 +7,30 @@ xhuman_path: '/home/ps/dy/dataset'
 geometry_model_path: '/home/ps/dy/X-Avatar/outputs/XHumans_smplx/00019_delta'
 configs:
   test:
-    model_mode: 'val'
-    image_size: 800
+    model_mode: 'fit'
+    image_size: 1024
     views:
       - 'front'
     t_mesh_name: 't_mesh.ply'
-    pkl_dir: '/home/ps/dy/dataset/00016/test/Take1/SMPLX'
-    model_name: 'model_260.ckpt'
+    pkl_dir: '/home/ps/dy/mycode2/t0717/00088_107'
+    model_name: 'model_50.ckpt'
     need_canonical: True
-    save_type: 'image'  # 'image' or 'mesh'
+    save_type: 'mesh'  # 'image' or 'mesh'
   edit:
-    image_size: 800
+    image_size: 1024
     lr: 0.005
     num_epochs: 1000
     t_mesh_name: 'mesh_pred.ply'
-    model_name: 'model_260.ckpt'
+    model_name: 'model_500.ckpt'
   train:
     image_size: 800
     pre_num_epochs: 200
     num_epochs: 500
     lr: 0.005
     t_mesh_name: 't_mesh.ply'
+  fit:
+    image_size: 1024
+    num_epochs: 50
+    lr: 0.001
+    t_mesh_name: 't_mesh.ply'
+    init_model_path: 'model_500.ckpt'
