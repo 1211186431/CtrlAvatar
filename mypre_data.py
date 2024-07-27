@@ -160,19 +160,19 @@ def main(config):
     out_smplx_ply_dir = os.path.join(out_dir, 'smplx_ply')
     out_gt_dir = os.path.join(out_dir, 'gt_ply')
 
-    # obj_list = find_obj_files(data_dir)
-    # process_ckpt_files(geometry_model_path, out_dir)
+    obj_list = find_obj_files(data_dir)
+    process_ckpt_files(geometry_model_path, out_dir)
     process_smplx_files(data_dir, out_smplx_dir,out_smplx_ply_dir)
-    # if len(obj_list) != 0:
-    #     print("rendering obj files")
-    #     for mesh_path,mesh_name in tqdm.tqdm(obj_list):
-    #         render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True)
-    # else:
-    #     print("rendering ply files")
-    #     for mesh_path,mesh_name in tqdm.tqdm(mesh_list):
-    #         render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size)
-    # process_gt_files(data_dir,out_gt_dir)
-    # process_def_mesh(out_dir)
+    if len(obj_list) != 0:
+        print("rendering obj files")
+        for mesh_path,mesh_name in tqdm.tqdm(obj_list):
+            render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True)
+    else:
+        print("rendering ply files")
+        for mesh_path,mesh_name in tqdm.tqdm(mesh_list):
+            render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size)
+    process_gt_files(data_dir,out_gt_dir)
+    process_def_mesh(out_dir)
 
 
 

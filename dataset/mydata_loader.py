@@ -6,8 +6,9 @@ from .data_helper import load_meta_info,load_smplx_data
 from .split_scan import set_color
 import trimesh
 import joblib
+import random
 class MyDataset(Dataset):
-    def __init__(self, base_path,subject,meta_info,image_size=256):
+    def __init__(self, base_path,subject,meta_info,image_size=256,sample_num=None):
         """
         Args:
             pkl_dir (string): Path to the folder with pkl files.
@@ -31,6 +32,15 @@ class MyDataset(Dataset):
         self.smplx_ply_files = sorted([f for f in os.listdir(self.smplx_ply_dir) if f.endswith('.ply')])
         self.def_mesh_files = sorted([f for f in os.listdir(self.def_mesh_dir) if f.endswith('.ply')])
         self.gt_ply_files = sorted([f for f in os.listdir(self.gt_ply_dir) if f.endswith('.ply')])
+        if sample_num is not None and sample_num < len(self.pkl_files):
+            # 随机采样sample_num个元素
+            indices = random.sample(range(len(self.pkl_files)), sample_num)
+            
+            # 使用采样的索引来获取对应的文件列表
+            self.pkl_files = [self.pkl_files[i] for i in indices]
+            self.smplx_ply_files = [self.smplx_ply_files[i] for i in indices]
+            self.def_mesh_files = [self.def_mesh_files[i] for i in indices]
+            self.gt_ply_files = [self.gt_ply_files[i] for i in indices]
 
     def __len__(self):
         return len(self.pkl_files)

@@ -6,6 +6,7 @@ import yaml
 from train import main as train_main
 from test import main as test_main
 from edit import main as edit_main
+from fit import main as fit_main
 import argparse
 def seed_everything(seed=42):
     random.seed(seed)
@@ -33,7 +34,8 @@ def main(mode,yaml_file_path):
     configs = {
         'test': merge_with_common(common_config,combined_config['configs']['test']),
         'edit': merge_with_common(common_config,combined_config['configs']['edit']),
-        'train': merge_with_common(common_config,combined_config['configs']['train'])
+        'train': merge_with_common(common_config,combined_config['configs']['train']),
+        'fit': merge_with_common(common_config,combined_config['configs']['fit'])
     }
     if mode == 'train':
         train_config = configs['train']
@@ -44,10 +46,13 @@ def main(mode,yaml_file_path):
     elif mode == 'edit':
         edit_config = configs['edit']
         edit_main(edit_config)
+    elif mode == 'fit':
+        fit_config = configs['fit']
+        fit_main(fit_config)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='color')
-    parser.add_argument('--mode', type=str, help='mode', default='train')
+    parser.add_argument('--mode', type=str, help='mode', default='fit')
     parser.add_argument('--config', type=str, default='/home/ps/dy/OpenAvatar/config/config00041.yaml')
     
     args = parser.parse_args()

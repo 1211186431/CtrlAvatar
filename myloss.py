@@ -80,5 +80,5 @@ def loss_3d(pred_color, def_color,label_idx):
     
     l1_loss_hand = F.l1_loss(left_hand_def_color, left_hand_pred_color) + F.l1_loss(right_hand_def_color, right_hand_pred_color)
     l1_loss_face = F.l1_loss(face_def_color, face_pred_color)
-    loss_3d = 2*l1_loss_hand + l1_loss_face
+    loss_3d = 5*l1_loss_hand + l1_loss_face
     return loss_3d
