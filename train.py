@@ -26,7 +26,7 @@ def train(model, dataloader, optimizer, renderers, num_epochs,mesh_data,pre_trai
             smpl_tfs = smplx_data['smpl_tfs']
             cond = get_cond(smplx_params)
             input_data = torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2)
-            if data['def_points'] is not None:
+            if data['def_points'] is not None and data['def_points'].shape[1] == mesh_data['verts'].shape[1]:
                 pred_colors = model(input_data)
                 def_verts = data['def_points']
             else:

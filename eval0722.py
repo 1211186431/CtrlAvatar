@@ -5,6 +5,7 @@ import numpy as np
 import tqdm
 import torch
 import argparse
+os.environ['IO_DISABLE_TELEMETRY'] = '1'
 def eval_render(obj_files,config):
     out_list = []
     for obj_file in tqdm.tqdm(obj_files):
@@ -48,7 +49,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='eval')
     parser.add_argument('--subject', type=str, default='00016')
-    parser.add_argument('--data_path', type=str, default='data_path /home/ps/dy/HaveFun_test/00016_havefun/meshes_test_obj')
+    parser.add_argument('--data_path', type=str, default='/home/ps/dy/HaveFun_test/00016_havefun/meshes_test_obj')
     parser.add_argument('--is_gt', type=bool, default=False)
     parser.add_argument('--method', type=str, default='HaveFun')
     parser.add_argument('--out_dir', type=str, default='/home/ps/dy/eval_havefun')

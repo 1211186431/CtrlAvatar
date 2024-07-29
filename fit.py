@@ -26,14 +26,13 @@ def fit(model, dataloader, optimizer, renderers, num_epochs,mesh_data):
             smpl_tfs = smplx_data['smpl_tfs']
             cond = get_cond(smplx_params)
             input_data = torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2)
-            if data['def_points'] is not None:
+            if data['def_points'] is not None and data['def_points'].shape[1] == mesh_data['verts'].shape[1]:
                 pred_colors = model(input_data)
                 def_verts = data['def_points']
             else:
                 pred_colors,pts_c = model(input_data,cond)
                 def_verts = model.deform(pts_c,smpl_tfs)
             pred_colors = weighted_color_average(point_color=pred_colors[0], index=mesh_data['idx'][0], distances=mesh_data['distances'][0]).unsqueeze(0)
-                
             mesh_albido = Meshes(def_verts,mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
             loss = 0
             pred_loss_3d = loss_3d(pred_colors,data['def_color'],data['label_idx'])

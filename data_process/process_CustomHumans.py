@@ -12,6 +12,7 @@ def main(args):
     subject = args.subject
     gender = args.gender
     test_len = args.test_len
+    subject_task_id = args.task_id
     mesh_dir_path = os.path.join(base_path, "mesh")
     smplx_dir_path = os.path.join(base_path, "smplx")
     out_dir_path = os.path.join(out_dir_path, subject)
@@ -32,7 +33,7 @@ def main(args):
             task_id = name_data[2]
             mesh_id = name_data[3]
             
-            if subject_id == subject:
+            if subject_id == subject and task_id == subject_task_id:
                 obj_mesh_path = os.path.join(mesh_dir_path, dir_name,"mesh-f"+mesh_id+".obj")
                 json_smplx_path = os.path.join(smplx_dir,"mesh-f"+mesh_id+".json")
                 data_path={
@@ -62,7 +63,6 @@ def main(args):
     if not os.path.exists(train_obj_path):
         os.makedirs(train_obj_path)
         os.makedirs(test_obj_path)
-
     shape_smplx_list = []        
     for i in tqdm.tqdm(range(len(data_path_list))):
         data_path = data_path_list[i]
@@ -89,7 +89,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--base_path", type=str, default="/home/ps/dy/c_data/CustomHumans")
     parser.add_argument("--out_dir_path", type=str, default="/home/ps/dy/mycode2/t0628")
-    parser.add_argument("--subject", type=str, default="00017")
+    parser.add_argument("--subject", type=str, default="00093")
+    parser.add_argument("--task_id", type=str, default="01")
     parser.add_argument("--gender", type=str, default="male")
     parser.add_argument("--test_len", type=int, default=2)
     main(parser.parse_args())

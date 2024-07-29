@@ -14,10 +14,11 @@ extra_subjects=("00036" "00058")
 # 定义方法和对应的路径
 declare -A methods
 methods=( 
-    ["HaveFun"]="/home/ps/dy/eval_havefun/HaveFun_"
-    ["Base"]="/home/ps/dy/eval_base/Base_"
-    ["Base_Nc"]="/home/ps/dy/eval_base_nc/Base_Nc_"
-    ["Ours"]="/home/ps/dy/eval_ours/Ours_"
+    # ["HaveFun"]="/home/ps/dy/eval_havefun/HaveFun_"
+    # ["Base"]="/home/ps/dy/eval_base/Base_"
+    # ["Base_Nc"]="/home/ps/dy/eval_base_nc/Base_Nc_"
+    # ["Ours"]="/home/ps/dy/eval_ours/Ours_"
+    ["Oursfit"]="/home/ps/dy/eval_oursfit/Oursfit_"
 )
 
 output_dir="/home/ps/dy/mycode2/t0717/eval_03"
@@ -27,7 +28,7 @@ gt_path="/home/ps/dy/eval_gt/gt_"
 for item in "${data_list[@]}"; do
     for method in "${!methods[@]}"; do
         echo "eval ${method} ${item} subject"
-        python ,/eval.py --subject ${item} --gt_npy ${gt_path}${item}.npy --pre_npy ${methods[$method]}${item}.npy --method ${method} --out_dir ${output_dir}
+        python ./eval.py --subject ${item} --gt_npy ${gt_path}${item}.npy --pre_npy ${methods[$method]}${item}.npy --method ${method} --out_dir ${output_dir}
     done
 done
 
