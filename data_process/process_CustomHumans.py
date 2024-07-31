@@ -88,9 +88,10 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--base_path", type=str, default="/home/ps/dy/c_data/CustomHumans")
-    parser.add_argument("--out_dir_path", type=str, default="/home/ps/dy/mycode2/t0628")
+    parser.add_argument("--out_dir_path", type=str, default="/home/ps/dy/chuman")
     parser.add_argument("--subject", type=str, default="00093")
     parser.add_argument("--task_id", type=str, default="01")
     parser.add_argument("--gender", type=str, default="male")
     parser.add_argument("--test_len", type=int, default=2)
+    print(parser.parse_args())
     main(parser.parse_args())

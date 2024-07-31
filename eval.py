@@ -4,12 +4,18 @@ import lpips
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 import tqdm
 import argparse
+import matplotlib.pyplot as plt
 # 计算 PSNR
 def calculate_psnr(gt_image, pred_image):
-    psnr_value = peak_signal_noise_ratio(gt_image, pred_image)
+    mask_gt = gt_image[..., 3]
+    mask_pred = pred_image[..., 3]
+    combined_mask = np.logical_or(mask_gt > 0, mask_pred > 0)
+    mse = np.mean((gt_image[combined_mask] - pred_image[combined_mask]) ** 2)
+    max_pixel = 255.0
+    psnr_value = 20 * np.log10(max_pixel / np.sqrt(mse))
     return psnr_value
 
-# 计算 SSIM
+# 计算 SSIM 
 def calculate_ssim(gt_image, pred_image):
     ssim_value = structural_similarity(gt_image, pred_image, channel_axis=-1)
     return ssim_value
@@ -50,11 +56,11 @@ def main(args):
 
     for i in tqdm.tqdm(range(num_groups)):
         for j in range(num_views):
-            gt_image = gt_matrix[i, j][:,:,:3]
-            pred_image = pred_matrix[i, j][:,:,:3]
+            gt_image = gt_matrix[i, j]
+            pred_image = pred_matrix[i, j]
 
             psnr_value = calculate_psnr(gt_image, pred_image)
-            ssim_value = calculate_ssim(gt_image, pred_image)
+            ssim_value = calculate_ssim(gt_image[:,:,:3], pred_image[:,:,:3])
             lpips_value = calculate_lpips(gt_image[np.newaxis, ...], pred_image[np.newaxis, ...], loss_fn)
 
             psnr_values.append(psnr_value)
@@ -103,10 +109,10 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='eval')
-    parser.add_argument('--subject', type=str, default='00017')
-    parser.add_argument('--gt_npy', type=str, default='/home/ps/dy/eval_gt/gt_00017.npy')
-    parser.add_argument('--pre_npy', type=str, default='/home/ps/dy/eval_oursfit/Oursfit_00017.npy')
-    parser.add_argument('--method', type=str, default='oursfit')
+    parser.add_argument('--subject', type=str, default='00016')
+    parser.add_argument('--gt_npy', type=str, default='/home/ps/dy/eval_gt/gt_00016.npy')
+    parser.add_argument('--pre_npy', type=str, default='/home/ps/dy/eval_base_nc/Base_Nc_00016.npy')
+    parser.add_argument('--method', type=str, default='ours')
     parser.add_argument('--out_dir', type=str, default='/home/ps/dy/mycode2/t0717')
     args = parser.parse_args()
     main(args)

@@ -111,9 +111,13 @@ def render_canonical(mesh_path, save_dir,image_size=512,views = ['front', 'back'
         renderer = Renderer(view=view, image_size=image_size,is_canonical=True)
         img_pred_def = render_pic(renderer, mesh)
         rgb_img = Image.fromarray(img_pred_def[:, :, :3])
+        rgba_img = Image.fromarray(img_pred_def)
         file_name = 'canonical_'+view + '.png'
+        file_name_rgba = 'canonical_'+view + '_rgba.png'
         save_path = os.path.join(save_dir, file_name)
+        save_dir_rgba = os.path.join(save_dir, file_name_rgba)
         rgb_img.save(save_path)
+        rgba_img.save(save_dir_rgba)
         print(f'Saved {view} view at {save_path}')
         
 if __name__ == '__main__':

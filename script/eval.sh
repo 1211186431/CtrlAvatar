@@ -1,12 +1,3 @@
-# data_list=("00016" "00017" "00018" "00019" "00020" "00021" "00024" "00025" "00027" "00028" "00034" "00035" "00036" "00039" "00041" "00058" "00085" "00086" "00087" "00088")
-# for item in "${data_list[@]}"; do
-#    echo "eval ${item} subject"
-#    python eval0722.py --subject ${item} --data_path /home/ps/dy/X-Avatar/outputs/XHumans_smplx/${item}_delta/meshes_test --is_gt False --method Ours --out_dir /home/ps/dy/eval_ours
-# done
-# for item in "${data_list[@]}"; do
-#    echo "eval ${item} subject"
-#    python eval0722.py --subject ${item} --data_path /home/ps/dy/HaveFun_test/${item}_havefun/meshes_test_obj --is_gt False --method HaveFun --out_dir /home/ps/dy/eval_havefun
-# done
 data_list=("00016" "00017" "00018" "00019" "00020" "00021" "00024" "00025" "00027" "00028" "00034" "00035" "00039" "00041" "00085" "00086" "00087" "00088")
 # 定义额外的subject列表
 extra_subjects=("00036" "00058")
@@ -14,10 +5,10 @@ extra_subjects=("00036" "00058")
 # 定义方法和对应的路径
 declare -A methods
 methods=( 
-    # ["HaveFun"]="/home/ps/dy/eval_havefun/HaveFun_"
-    # ["Base"]="/home/ps/dy/eval_base/Base_"
-    # ["Base_Nc"]="/home/ps/dy/eval_base_nc/Base_Nc_"
-    # ["Ours"]="/home/ps/dy/eval_ours/Ours_"
+    ["HaveFun"]="/home/ps/dy/eval_havefun/HaveFun_"
+    ["Base"]="/home/ps/dy/eval_base/Base_"
+    ["Base_Nc"]="/home/ps/dy/eval_base_nc/Base_Nc_"
+    ["Ours"]="/home/ps/dy/eval_ours/Ours_"
     ["Oursfit"]="/home/ps/dy/eval_oursfit/Oursfit_"
 )
 

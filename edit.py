@@ -58,8 +58,8 @@ def main(config):
     smplx_model_path = os.path.join(base_path, 'model/smplx/smplx_model')
     meta_info_path = os.path.join(base_path, 'data',subject,'meta_info.npz')
     meta_info = load_meta_info(meta_info_path)
-    front_img_path = os.path.join(base_path, 'data',subject,'t_mesh','canonical_front.png')
-    back_img_path = os.path.join(base_path, 'data',subject,'t_mesh','canonical_back.png')
+    front_img_path = os.path.join(base_path, 'data',subject,'t_mesh','canonical_front_edit.png')
+    back_img_path = os.path.join(base_path, 'data',subject,'t_mesh','canonical_back_edit.png')
     img_gt={'front':load_img(front_img_path)[1],'back':load_img(back_img_path)[1]}
 
     verts,faces,normals = load_mesh(mesh_path)
