@@ -36,20 +36,20 @@ def move_file(src_path, dest_path):
 
 
 def main(args):
-    data_num=args.data_num
-    base_path=args.base_path
-    new_base_path=args.new_base_path
+    subject=args.subject
+    xhumans_path=args.xhumans_path
+    out_path=args.out_path
     data_type_list = ["train","test"]
-    gender_path = os.path.join(base_path,data_num,"gender.txt")
-    mean_smplx = os.path.join(base_path,data_num,"mean_shape_smplx.npy")
-    mean_smpl = os.path.join(base_path,data_num,"mean_shape_smpl.npy")
-    move_file(gender_path,os.path.join(new_base_path,data_num,"gender.txt"))
-    move_file(mean_smplx,os.path.join(new_base_path,data_num,"mean_shape_smplx.npy"))
-    move_file(mean_smpl,os.path.join(new_base_path,data_num,"mean_shape_smpl.npy"))
+    gender_path = os.path.join(xhumans_path,subject,"gender.txt")
+    mean_smplx = os.path.join(xhumans_path,subject,"mean_shape_smplx.npy")
+    mean_smpl = os.path.join(xhumans_path,subject,"mean_shape_smpl.npy")
+    move_file(gender_path,os.path.join(out_path,subject))
+    move_file(mean_smplx,os.path.join(out_path,subject,"mean_shape_smplx.npy"))
+    move_file(mean_smpl,os.path.join(out_path,subject,"mean_shape_smpl.npy"))
 
     for data_type in data_type_list:
-        directory_path = os.path.join(base_path,data_num,data_type)
-        new_directory_path = os.path.join(new_base_path,data_num,data_type)
+        directory_path = os.path.join(xhumans_path,subject,data_type)
+        new_directory_path = os.path.join(out_path,subject,data_type)
         subdirectories = [d for d in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, d))]
         for take in tqdm.tqdm(sorted(subdirectories)):
             path = os.path.join(directory_path, take)
@@ -65,12 +65,12 @@ def main(args):
             new_mesh_path = os.path.join(new_directory_path, take, "meshes_ply")
             new_obj_path = os.path.join(new_directory_path, take, "meshes_obj")
             png_files, number_of_png_files = list_and_count_files(file_path=img_path,file_type="*.png")
-            smplx_pkl_files, number_of_smplx_pkl_files = list_and_count_files(file_path=smplx_path,file_type="*.pkl")
-            smplx_files, number_of_smplx_files = list_and_count_files(file_path=smplx_path,file_type="*.ply")
-            smpl_pkl_files, number_of_smpl_pkl_files = list_and_count_files(file_path=smpl_path,file_type="*.pkl")
-            smpl_files, number_of_smpl_files = list_and_count_files(file_path=smpl_path,file_type="*.ply")
-            mesh_files, number_of_mesh_files = list_and_count_files(file_path=mesh_path,file_type="*.ply")
-            obj_files, number_of_obj_files = list_and_count_files(file_path=obj_path,file_type="*.obj")
+            smplx_pkl_files, _ = list_and_count_files(file_path=smplx_path,file_type="*.pkl")
+            smplx_files, _ = list_and_count_files(file_path=smplx_path,file_type="*.ply")
+            smpl_pkl_files, _ = list_and_count_files(file_path=smpl_path,file_type="*.pkl")
+            smpl_files, _ = list_and_count_files(file_path=smpl_path,file_type="*.ply")
+            mesh_files, _ = list_and_count_files(file_path=mesh_path,file_type="*.ply")
+            obj_files, _ = list_and_count_files(file_path=obj_path,file_type="*.obj")
             if data_type == "train":
                 num_list = [75,90,105,120]
             elif data_type == "test":
@@ -122,7 +122,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_num", type=str, default="00034")
-    parser.add_argument("--base_path", type=str, default="/home/ps/dy/dataset/x_human")
-    parser.add_argument("--new_base_path", type=str, default="/home/ps/dy/dataset")
+    parser.add_argument("--subject", type=str, default="00034")
+    parser.add_argument("--xhumans_path", type=str, default="/home/ps/dy/dataset/x_human")
+    parser.add_argument("--out_path", type=str, default="/home/ps/dy/dataset")
     main(parser.parse_args())
