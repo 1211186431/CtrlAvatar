@@ -1,7 +1,7 @@
 import torch.optim as optim
 import torch
 import os
-from myloss import img_loss,loss_3d
+from model.loss import img_loss,loss_3d
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
@@ -70,7 +70,7 @@ def main(config):
     mesh_path = os.path.join(base_path, 'data',subject,'t_mesh',t_mesh_name)
     meta_info_path = os.path.join(base_path, 'data',subject,'meta_info.npz')
     deformer_model_path = os.path.join(base_path, 'data',subject,'last.ckpt')
-    smplx_model_path = os.path.join(base_path, 'model/smplx/smplx_model')
+    smplx_model_path = os.path.join(base_path, 'geometry/code/lib/smplx/smplx_model')
 
     val_img_dir = os.path.join(base_path, 'outputs','val',subject,'img_val')
     val_mesh_dir = os.path.join(base_path, 'outputs','val',subject,'mesh_val')

@@ -110,9 +110,9 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='eval')
     parser.add_argument('--subject', type=str, default='00016')
-    parser.add_argument('--gt_npy', type=str, default='/home/ps/dy/eval_gt/gt_00016.npy')
-    parser.add_argument('--pre_npy', type=str, default='/home/ps/dy/eval_base_nc/Base_Nc_00016.npy')
+    parser.add_argument('--gt_npy', type=str, default='/home/ps/dy/eval_aaai25/eval0805/eval_gt/gt_00016.npy')
+    parser.add_argument('--pre_npy', type=str, default='/home/ps/dy/eval_aaai25/eval0805/eval_base_nc/Base_Nc_00016.npy')
     parser.add_argument('--method', type=str, default='ours')
-    parser.add_argument('--out_dir', type=str, default='/home/ps/dy/mycode2/t0717')
+    parser.add_argument('--out_dir', type=str, default='/home/ps/dy/mycode3/t1028')
     args = parser.parse_args()
     main(args)

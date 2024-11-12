@@ -67,6 +67,7 @@ def img_loss(pred_img, gt_img):
     ssim_avg = (ssim_r + ssim_g + ssim_b) / 3
     perceptual_loss = perceptualloss(x, y)
     loss = 100*l1_loss+(1-ssim_avg)*50 + 5*perceptual_loss
+    # loss = l1_loss+(1-ssim_avg)*1 + perceptual_loss
     return loss
 
 def loss_3d(pred_color, def_color,label_idx): 
@@ -95,5 +96,7 @@ def fit_loss(pred_img, gt_img):
     # Average SSIM over all channels
     ssim_avg = (ssim_r + ssim_g + ssim_b) / 3
     perceptual_loss = perceptualloss(x, y)
+    ## 部分用这个
+    # loss = l1_loss+(1-ssim_avg)*10 + perceptual_loss*10
     loss = 100*l1_loss+(1-ssim_avg)*10 + perceptual_loss*20
     return loss

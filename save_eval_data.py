@@ -31,7 +31,7 @@ def eval(base_path,config,is_gt=False,subject=None):
 
 def main(args):
     data_path = args.data_path
-    is_gt = False
+    is_gt = args.is_gt
     method = args.method
     subject = args.subject
     out_dir = args.out_dir
@@ -40,7 +40,7 @@ def main(args):
         "is_obj":True
     }
     if is_gt:
-        eval_data = eval(data_path,config,True,subject,)
+        eval_data = eval(data_path,config,True,subject)
     else:
         config["is_obj"]=False
         eval_data = eval(data_path,config,False)
@@ -49,9 +49,9 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='eval')
     parser.add_argument('--subject', type=str, default='00016')
-    parser.add_argument('--data_path', type=str, default='/home/ps/dy/HaveFun_test/00016_havefun/meshes_test_obj')
+    parser.add_argument('--data_path', type=str, default='/home/ps/dy/CtrlAvatar/outputs/test/00016/mesh_test')
     parser.add_argument('--is_gt', type=bool, default=False)
-    parser.add_argument('--method', type=str, default='HaveFun')
-    parser.add_argument('--out_dir', type=str, default='/home/ps/dy/eval_havefun')
+    parser.add_argument('--method', type=str, default='Ctrl')
+    parser.add_argument('--out_dir', type=str, default='/home/ps/dy/')
     args = parser.parse_args()
     main(args)

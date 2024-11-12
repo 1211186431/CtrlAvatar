@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from .deformer import ForwardDeformer, skinning
 from .network import ImplicitNetwork
-from .delta_mlp_0611 import condNet
+from .cond_net import condNet
 from .smpl import SMPLXServer
 
 import os

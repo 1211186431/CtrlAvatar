@@ -1,7 +1,7 @@
 import torch.optim as optim
 import torch
 import os
-from myloss import fit_loss,loss_3d
+from model.loss import fit_loss,loss_3d
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet

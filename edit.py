@@ -1,7 +1,7 @@
 import torch.optim as optim
 import torch
 import os
-from myloss import img_loss
+from model.loss import img_loss
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
@@ -11,7 +11,6 @@ from dataset.data_helper import load_meta_info
 from dataset.myutil import load_img
 from pytorch3d.ops import knn_points
 from model.mynetutil import weighted_color_average
-import yaml
 
 
 def train(model,optimizer, renderers,images,mesh_data,num_epochs=1000):

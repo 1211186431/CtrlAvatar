@@ -10,7 +10,6 @@ import tqdm
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
-import yaml
 
 def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,save_type='img'):
     model.eval()
@@ -55,7 +54,7 @@ def main(config):
     test_img_dir = os.path.join(base_path,'outputs', 'test',subject,'img_test')
     ensure_directory_exists(test_mesh_dir)
     ensure_directory_exists(test_img_dir)
-    smplx_model_path = os.path.join(base_path, 'model/smplx/smplx_model')
+    smplx_model_path = os.path.join(base_path, 'geometry/code/lib/smplx/smplx_model')
     renderers = setup_views(image_size=image_size,views=views)
 
 

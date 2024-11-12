@@ -1,4 +1,7 @@
 import os
+project_root = os.path.abspath(os.path.dirname(__file__))
+# 设置环境变量 PYTHONPATH
+os.environ["PYTHONPATH"] = project_root
 import random
 import numpy as np
 import torch
@@ -8,6 +11,7 @@ from test import main as test_main
 from edit import main as edit_main
 from fit import main as fit_main
 import argparse
+from omegaconf import OmegaConf
 def seed_everything(seed=42):
     random.seed(seed)
     np.random.seed(seed)
@@ -20,10 +24,17 @@ def merge_with_common(common_config,config):
     merged_config = common_config.copy()
     merged_config.update(config)
     return merged_config
-def main(mode,yaml_file_path):
+
+def load_config(yaml_file_path,subject=None):
+    config = OmegaConf.load(yaml_file_path)
+    config["geometry_model_path"] = os.path.join(config['base_path'], config["geometry_model_path"])
+    if subject is not None:
+        config["subject"] = subject
+        config["geometry_model_path"].replace('00016',subject)
+    return config
+def main(mode,yaml_file_path,subject=None):
     seed_everything()
-    with open(yaml_file_path, 'r') as file:
-        combined_config = yaml.safe_load(file)
+    combined_config = load_config(yaml_file_path,subject)
     common_config = {
         'base_path': combined_config['base_path'],
         'K': combined_config['K'],
@@ -52,9 +63,9 @@ def main(mode,yaml_file_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='color')
-    parser.add_argument('--mode', type=str, help='mode', default='test')
-    parser.add_argument('--config', type=str, default='/home/ps/dy/OpenAvatar/config/config00020.yaml')
-    
+    parser.add_argument('--mode', type=str, help='mode', default='train')
+    parser.add_argument('--config', type=str, default='/home/ps/dy/CtrlAvatar/config/SXHumans.yaml')
+    parser.add_argument('--subject', type=str, default=None)
     args = parser.parse_args()
     
     main(mode=args.mode, yaml_file_path=args.config)
