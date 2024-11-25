@@ -164,3 +164,4 @@ __pycache__/
 *.pyc
 init_model/
 build/
+geometry/code/lib/smplx/smplx_model/

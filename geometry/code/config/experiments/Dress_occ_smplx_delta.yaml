@@ -1,7 +1,7 @@
 defaults:
   - base_exp
   
-expname: CHumans_smplx
+expname: Dress_smplx
 load_init: true
 resume: false
 trainer:
