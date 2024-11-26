@@ -5,7 +5,6 @@ os.environ["PYTHONPATH"] = project_root
 import random
 import numpy as np
 import torch
-import yaml
 from train import main as train_main
 from test import main as test_main
 from edit import main as edit_main
@@ -30,7 +29,7 @@ def load_config(yaml_file_path,subject=None):
     config["geometry_model_path"] = os.path.join(config['base_path'], config["geometry_model_path"])
     if subject is not None:
         config["subject"] = subject
-        config["geometry_model_path"].replace('00016',subject)
+        config["geometry_model_path"] = config["geometry_model_path"].replace('00000',subject)
     return config
 def main(mode,yaml_file_path,subject=None):
     seed_everything()
@@ -68,4 +67,4 @@ if __name__ == '__main__':
     parser.add_argument('--subject', type=str, default=None)
     args = parser.parse_args()
     
-    main(mode=args.mode, yaml_file_path=args.config)
+    main(mode=args.mode, yaml_file_path=args.config,subject=args.subject)

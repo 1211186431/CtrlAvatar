@@ -1,11 +1,11 @@
 import torch
 import os
-from dataset.mydata_util import load_mesh, render_canonical,render_trimesh,setup_views
-from dataset.myutil import save_mesh,save_img,ensure_directory_exists
+from dataset.data_util import load_mesh, render_canonical,render_trimesh,setup_views
+from dataset.util import save_mesh,save_img,ensure_directory_exists
 from dataset.data_helper import load_meta_info,get_cond
 from pytorch3d.ops import knn_points
-from model.mynetutil import weighted_color_average
-from dataset.mydata_loader import load_smplx_params
+from model.netutil import weighted_color_average
+from dataset.data_loader import load_smplx_params
 import tqdm
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes

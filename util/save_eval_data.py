@@ -1,6 +1,6 @@
 import glob
 import os
-from dataset.mydata_util import render_data
+from dataset.data_util import render_data
 import numpy as np
 import tqdm
 import torch

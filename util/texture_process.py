@@ -2,8 +2,14 @@ import os
 import shutil
 import glob
 import tqdm
-from dataset.mydata_util import render_data
+import sys
 import argparse
+current_file_path = os.path.abspath(__file__)
+parent_dir = os.path.dirname(current_file_path)
+project_root = os.path.dirname(parent_dir)
+sys.path.insert(0, project_root)
+
+from dataset.data_util import render_data
 from model.color_net import MyColorNet
 from dataset.data_helper import load_meta_info,load_smplx_data
 import torch
@@ -123,7 +129,7 @@ def process_def_mesh(source_dir):
     meta_info_path = os.path.join(source_dir, 'meta_info.npz')
     meta_info = load_meta_info(meta_info_path)
     model_path = os.path.join(source_dir, 'last.ckpt')
-    smplx_model_path = os.path.join(source_dir[:-11], 'model/smplx/smplx_model')
+    smplx_model_path = os.path.join(source_dir[:-16], 'geometry/code/lib/smplx/smplx_model')
     t_mesh = trimesh.load(os.path.join(source_dir, 't_mesh', 't_mesh.ply'))
     out_def_path = os.path.join(source_dir, 'def_mesh')
     if not os.path.exists(out_def_path):
@@ -175,13 +181,13 @@ def load_config(yaml_file_path,subject=None):
     config["geometry_model_path"] = os.path.join(config['base_path'], config["geometry_model_path"])
     if subject is not None:
         config["subject"] = subject
-        config["geometry_model_path"].replace('00016',subject)
+        config["geometry_model_path"] = config["geometry_model_path"].replace('00000',subject)
     return config
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='color')
-    parser.add_argument('--config', type=str, default='/home/ps/dy/CtrlAvatar/config/sxhumans.yaml')
+    parser.add_argument('--config', type=str, default='/home/ps/dy/CtrlAvatar/config/S4DDress.yaml')
     parser.add_argument('--subject', type=str, default=None)
     args = parser.parse_args()
     yaml_file_path = args.config

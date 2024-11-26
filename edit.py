@@ -5,12 +5,12 @@ from model.loss import img_loss
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
-from dataset.mydata_util import load_mesh, setup_views, render_trimesh
-from dataset.myutil import save_img, save_mesh,ensure_directory_exists
+from dataset.data_util import load_mesh, setup_views, render_trimesh
+from dataset.util import save_img, save_mesh,ensure_directory_exists
 from dataset.data_helper import load_meta_info
-from dataset.myutil import load_img
+from dataset.util import load_img
 from pytorch3d.ops import knn_points
-from model.mynetutil import weighted_color_average
+from model.netutil import weighted_color_average
 
 
 def train(model,optimizer, renderers,images,mesh_data,num_epochs=1000):

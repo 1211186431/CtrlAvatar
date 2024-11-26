@@ -1,7 +1,7 @@
 import os
 import torch
 from torch.utils.data import Dataset, DataLoader
-from .myutil import load_img
+from .util import load_img
 from .data_helper import load_meta_info,load_smplx_data
 from .split_scan import set_color
 import trimesh
@@ -18,9 +18,9 @@ class MyDataset(Dataset):
         """
         self.meta_info = meta_info
         if str(meta_info['gender']) == 'male':
-            label_path = os.path.join(base_path, 'model/smplx/smplx_model/watertight_male_vertex_labels.pkl')
+            label_path = os.path.join(base_path, 'geometry/code/lib/smplx/smplx_model/watertight_male_vertex_labels.pkl')
         else:
-            label_path = os.path.join(base_path, 'model/smplx/smplx_model/watertight_female_vertex_labels.pkl')
+            label_path = os.path.join(base_path, 'geometry/code/lib/smplx/smplx_model/watertight_female_vertex_labels.pkl')
             
         self.verts_ids = joblib.load(label_path)
         self.pkl_dir = os.path.join(base_path, 'data',subject,'smplx_pkl')

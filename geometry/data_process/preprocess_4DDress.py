@@ -72,11 +72,14 @@ def set_seq_data(dataset_dir, subj, seq, outfit, output_dir, is_test):
     basic_info = load_pickle(os.path.join(subj_outfit_seq_dir, 'basic_info.pkl'))
     scan_frames, scan_rotation = basic_info['scan_frames'], basic_info['rotation']
     betas_list = []
-    
-    # process all frames
-    loop = tqdm.tqdm(range(len(scan_frames)))
+    train_frames = [len(scan_frames)//5, len(scan_frames)//5*2, len(scan_frames)//5*3, len(scan_frames)//5*4]
+    if is_test:
+        # process all frames
+        loop = tqdm.tqdm(range(len(scan_frames)))
+    else:
+        # process train frames
+        loop = tqdm.tqdm(train_frames)
     for n_frame in loop:
-        # check stop frame
         frame = scan_frames[n_frame]
         loop.set_description('## Loading Frame for {}_{}_{}: {}/{}'.format(subj, outfit, seq, frame, scan_frames[-1]))
 
@@ -145,7 +148,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--subj', default='00122', help='subj name')
     parser.add_argument('--outfit', default='Inner', help='outfit name')
-    parser.add_argument('--gender', default='male', help='male or woman')
+    parser.add_argument('--gender', default='male', help='male or female')
     parser.add_argument('--out', default='/home/ps/dy/dataset/S4d', help='output dir')
     args = parser.parse_args()
     set_subj_data(dataset_dir=DATASET_DIR, subj=args.subj, outfit=args.outfit, output_dir=args.out , gender=args.gender)

@@ -5,14 +5,14 @@ from model.loss import img_loss,loss_3d
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
-from dataset.mydata_util import load_mesh, setup_views, render_trimesh
-from dataset.myutil import save_img, save_mesh,ensure_directory_exists
+from dataset.data_util import load_mesh, setup_views, render_trimesh
+from dataset.util import save_img, save_mesh,ensure_directory_exists
 from dataset.data_helper import load_meta_info,get_cond
-from dataset.mydata_loader import MyDataset, DataLoader
+from dataset.data_loader import MyDataset, DataLoader
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from pytorch3d.ops import knn_points
-from model.mynetutil import weighted_color_average
+from model.netutil import weighted_color_average
 
 def train(model, dataloader, optimizer, renderers, num_epochs,mesh_data,pre_train=False):
     model.freeze_other_model()

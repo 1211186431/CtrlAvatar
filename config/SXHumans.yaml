@@ -1,9 +1,9 @@
-subject: '00016'
+subject: '111'
 base_path: '/home/ps/dy/CtrlAvatar'
 data_path: '/home/ps/dy/dataset/SXHuman'
 K: 6
 gpu_id: 0
-geometry_model_path: 'geometry/outputs/XHumans_smplx/00016_delta'
+geometry_model_path: 'geometry/outputs/XHumans_smplx/111_delta'
 configs:
   test:
     model_mode: 'fit'
@@ -14,7 +14,7 @@ configs:
     model_name: 'model_50.ckpt'
     need_canonical: True
     save_type: 'mesh'  # 'image' or 'mesh'
-    pkl_dir: '/home/ps/dy/dataset/SXHuman/00016/test'
+    pkl_dir: '/home/ps/dy/dataset/SXHuman/111/test'
   edit:
     image_size: 1024
     lr: 0.005

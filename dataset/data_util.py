@@ -1,5 +1,5 @@
 import torch
-from .myutil import load_RT, load_img
+from .util import load_RT, load_img
 import trimesh
 import os
 import numpy as np

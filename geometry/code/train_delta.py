@@ -39,7 +39,7 @@ def main(opt):
     # logger
     with open('.hydra/config.yaml', 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
-    logger = pl.loggers.WandbLogger(project='Ours_CHumans', config=config)
+    logger = pl.loggers.WandbLogger(project='Ours_1126', config=config)
 
     # checkpoint
     if opt.experiments.epoch == 'last':

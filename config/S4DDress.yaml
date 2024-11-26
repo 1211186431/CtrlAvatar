@@ -1,19 +1,20 @@
-base_path: '/home/ps/dy/CtrlAvatar'
 subject: '00000'
+base_path: '/home/ps/dy/CtrlAvatar'
+data_path: '/home/ps/dy/dataset/S4d'
+K: 6
 gpu_id: 0
-data_path: '/home/ps/dy/dataset/SCHuman'
-geometry_model_path: 'geometry/outputs/CHumans_smplx/00000_delta'
+geometry_model_path: 'geometry/outputs/Dress_smplx/00000'
 configs:
   test:
-    model_mode: 'train'
+    model_mode: 'fit'
     image_size: 1024
     views:
       - 'front'
     t_mesh_name: 't_mesh.ply'
-    pkl_dir: '/home/ps/dy/chuman/00000/test'
     model_name: 'model_50.ckpt'
     need_canonical: True
     save_type: 'mesh'  # 'image' or 'mesh'
+    pkl_dir: '/home/ps/dy/dataset/S4d/00000/test'
   edit:
     image_size: 1024
     lr: 0.005

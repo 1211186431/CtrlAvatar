@@ -1,7 +1,6 @@
 import torch
-import hydra
 import numpy as np
-from .smplx.body_models import SMPLX
+from geometry.code.lib.smplx import SMPLX
 
 
 class SMPLXServer(torch.nn.Module):
