@@ -1,6 +1,6 @@
 import glob
 import os
-from dataset.data_util import render_data
+from dataset.render_util import render_data
 import numpy as np
 import tqdm
 import torch
@@ -10,7 +10,7 @@ def eval_render(obj_files,config):
     out_list = []
     for obj_file in tqdm.tqdm(obj_files):
         with torch.no_grad():
-            out_data_list = render_data(obj_file,None,None,image_size=config['imge_size'],is_obj=config['is_obj'])
+            out_data_list = render_data(obj_file,None,None,image_size=config['imge_size'],is_obj=config['is_obj'],renderer_type=config['renderer_type'])
         ## (views, height, width, channels)
         out_data = np.stack(out_data_list, axis=0)
         out_list.append(out_data)
@@ -35,9 +35,11 @@ def main(args):
     method = args.method
     subject = args.subject
     out_dir = args.out_dir
+    renderer_type = args.renderer_type
     config = {
         "imge_size":1024,
-        "is_obj":True
+        "is_obj":True,
+        "renderer_type":renderer_type
     }
     if is_gt:
         eval_data = eval(data_path,config,True,subject)
@@ -53,5 +55,6 @@ if __name__ == '__main__':
     parser.add_argument('--is_gt', type=bool, default=False)
     parser.add_argument('--method', type=str, default='Ctrl')
     parser.add_argument('--out_dir', type=str, default='/home/ps/dy/')
+    parser.add_argument('--renderer_type', type=str, default='pytorch3d')
     args = parser.parse_args()
     main(args)

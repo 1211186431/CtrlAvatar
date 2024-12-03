@@ -4,9 +4,6 @@ from .deformer import ForwardDeformer, skinning
 from .network import ImplicitNetwork
 from .cond_net import condNet
 from .smpl import SMPLXServer
-
-import os
-os.environ['CUDA_VISIBLE_DEVICES']='3'
 class MyColorNet(nn.Module):
     def __init__(self,meta_info,pretrained_path=None,smpl_model_path=None,d_in_color=3):
         super(MyColorNet, self).__init__()
@@ -63,8 +60,6 @@ class MyColorNet(nn.Module):
                                         smpl_tfs)
         return verts_mesh_deformed
     
-
-
     def load_deformer_weights(self, pretrained_path):
         """
         Load deformer network weights from a checkpoint into the specified model.
@@ -73,17 +68,11 @@ class MyColorNet(nn.Module):
         model (torch.nn.Module): The model that contains a 'deformer' attribute.
         pretrained_path (str): Path to the pretrained model checkpoint.
         """
-        # 加载预训练模型
         pretrained_model = torch.load(pretrained_path, map_location=torch.device('cuda:0'))
-
-        # 获取deformer网络的状态字典
         deformer_state_dict = {key: value for key, value in pretrained_model['state_dict'].items() if key.startswith('deformer.lbs_network')}
-
-        # 根据错误信息调整，添加 'lbs_network.' 前缀来匹配模型中的键
         adjusted_state_dict = {'lbs_network.' + key.replace('deformer.lbs_network.', ''): value for key, value in deformer_state_dict.items()}
-
-        # 加载权重
         self.deformer.load_state_dict(adjusted_state_dict) 
+        
     def load_cond_weights(self, pretrained_path):
         """
         Load deformer network weights from a checkpoint into the specified model.
@@ -112,7 +101,6 @@ class MyColorNet(nn.Module):
         delta_state_dict = {key: value for key, value in pretrained_model['state_dict'].items() if key.startswith('delta_net')}
         adjusted_state_dict = {key.replace('delta_net.', ''): value for key, value in delta_state_dict.items()}
 
-        # 加载权重
         self.delta_net.load_state_dict(adjusted_state_dict)
         
     def freeze_other_model(self):

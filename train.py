@@ -5,7 +5,7 @@ from model.loss import img_loss,loss_3d
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
-from dataset.data_util import load_mesh, setup_views, render_trimesh
+from dataset.render_util import load_mesh, setup_views, render_trimesh
 from dataset.util import save_img, save_mesh,ensure_directory_exists
 from dataset.data_helper import load_meta_info,get_cond
 from dataset.data_loader import MyDataset, DataLoader
@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from pytorch3d.ops import knn_points
 from model.netutil import weighted_color_average
+from dataset.mesh import Mesh 
 
 def train(model, dataloader, optimizer, renderers, num_epochs,mesh_data,pre_train=False):
     model.freeze_other_model()
@@ -36,9 +37,16 @@ def train(model, dataloader, optimizer, renderers, num_epochs,mesh_data,pre_trai
                 
             mesh_albido = Meshes(def_verts,mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
             loss = 0
-            for j ,(view,renderer) in enumerate(renderers.items()):
-                pred_img = render_trimesh(mesh_albido, renderer)
-                loss += img_loss(pred_img[:,:,:3], images[j]) * (1/len(renderers))
+            if hasattr(renderers,'items'):
+                for j ,(view,renderer) in enumerate(renderers.items()):
+                    pred_img = render_trimesh(mesh_albido, renderer)
+                    loss += img_loss(pred_img[:,:,:3], images[j]) * (1/len(renderers))
+            else:
+                # use nvidffrast
+                mesh_albido = Mesh(def_verts[0], mesh_data['faces'][0],colors=pred_colors[0])
+                pred_imgs = render_trimesh(mesh_albido, renderers,renderer_type='nvdiff')
+                loss += img_loss(pred_imgs, images)
+                pred_img = pred_imgs[-1]
             loss.backward()
             optimizer.step()
             
@@ -66,6 +74,7 @@ def main(config):
     K = config['K']
     lr = config['lr']
     t_mesh_name = config['t_mesh_name']
+    renderer_type = config['renderer_type']
 
     mesh_path = os.path.join(base_path, 'data',subject,'t_mesh',t_mesh_name)
     meta_info_path = os.path.join(base_path, 'data',subject,'meta_info.npz')
@@ -85,7 +94,7 @@ def main(config):
     ensure_directory_exists(log_dir)
 
     verts,faces,normals = load_mesh(mesh_path)
-    renderers = setup_views(image_size=image_size)
+    renderers = setup_views(image_size=image_size,renderer_type=renderer_type)
     meta_info = load_meta_info(meta_info_path)
     model = MyColorNet(meta_info,deformer_model_path,smplx_model_path,d_in_color=6).cuda()
     dataset = MyDataset(base_path=base_path,subject=subject,meta_info=meta_info,image_size=image_size)

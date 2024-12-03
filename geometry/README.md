@@ -1,78 +1,84 @@
-# 训练几何
+# Geometry Training Guide
+This guide explains the steps to complete geometry training tasks, including data preparation, processing, training, testing, and visualization. The code is modified based on [X-Avatar](https://github.com/Skype-line/X-Avatar).
 
-## 准备数据
-1. 下载 [SMPLX](https://smpl-x.is.tue.mpg.de)
+## Data Preparation
+1. Download [SMPLX Model](https://smpl-x.is.tue.mpg.de)  
 
-2. 下载 [init_model](https://github.com/Skype-line/X-Avatar)
+2. Download [init_model](https://github.com/Skype-line/X-Avatar)  
 
-3. 移动到对应位置
+3. Move the downloaded files to the corresponding directories as required by the code.
 
-## SX-Humans
-1. 下载 [X-Humans](https://github.com/Skype-line/X-Avatar)
+## SX-Humans Dataset
+1. Download [X-Humans](https://github.com/Skype-line/X-Avatar)  
 
-2. 处理数据
-修改```pre_SXHumans.sh```中数据集路径和输出路径
+2. Process the data
+- Modify the dataset path and output path in `pre_SXHumans.sh` to match your local environment.
+
 ```
+cd data_process
 bash pre_SXHumans.sh
 ```
 
-3. 训练
+3. Training
 ```
+cd ../code
+
 python train_delta.py subject=00016_delta datamodule=XHumans_scan_smplx experiments=XHumans_occ_smplx_delta datamodule.dataloader.dataset_path=/datapath
 ```
 
-4. 测试
+4. Testing
 ```
 python test_delta.py subject=00016_delta experiments=XHumans_occ_smplx_delta demo.motion_path=/datapath/test
 ```
 
-## SCustomHumans
-1. 下载 [CustomHumans](https://github.com/custom-humans/editable-humans)
+## SCustomHumans Dataset
+1. Download [CustomHumans](https://github.com/custom-humans/editable-humans)
 
-2. 处理数据
-修改```preprocess_SCustomHumans.py```中数据集路径以及输出路径
+2. Process the data
+Modify the dataset path and output path in ```preprocess_SCustomHumans.py```.
 ```
+cd data_process
+
 bash pre_SCHumans.sh
 ```
 
-3. 训练
+3. Training
 ```
+cd ../code
+
 python train_delta.py subject=00067_delta datamodule=CustomHumans_scan_smplx experiments=CHumans_occ_smplx_delta datamodule.dataloader.dataset_path=/datapath
 ```
 
-4. 测试
+4. Test
 ```
 python test_delta.py subject=00067_delta experiments=CHumans_occ_smplx_delta demo.motion_path=/datapath/test
 ```
 
 ## 4D-Dress
-1. 下载 [4D-Dress](https://github.com/eth-ait/4d-dress)
+1. Download [4D-Dress](https://github.com/eth-ait/4d-dress)
 
-2. 处理数据
+2. Process the data
 
-修改 ```preprocess_4DDress.py```中```DATASET_DIR```为数据集根目录，并指定输出路径
+Modify ```DATASET_DIR``` in ```preprocess_4DDress.py``` to set the dataset root directory and specify the output path.
 ```
+cd data_process
+
 bash pre_S4DDress.sh
 ```
 
-
-3. 训练
+3. Training
 ```
+cd ../code
+
 python train_delta.py subject=00122_Inner datamodule=Dress_scan_smplx experiments=Dress_occ_smplx_delta datamodule.dataloader.dataset_path=/datapath
 ```
 
-4. 测试
+4. Testing
 ```
 python test_delta.py subject=00122_Inner experiments=Dress_occ_smplx_delta demo.motion_path=/datapath/test
 ```
 
-<!-- 训练XAvatar
+5. Visualizing Results
 ```
-python train.py subject=00122_Inner datamodule=Dress_scan_smplx experiments=Dress_occ_smplx_baseline datamodule.dataloader.dataset_path=/datapath
+python vis_meshes.py --data_root /home/ps/dy/CtrlAvatar/geometry/outputs/Dress_smplx/00122_Inner/meshes_test --mode_type ply
 ```
-
-测试XAvatar
-```
-python test.py subject=000122_Inner experiments=Dress_occ_smplx_baseline demo.motion_path=/datapath/test
-``` -->
-<!-- python train.py subject=000122_Inner datamodule=Dress_scan_smplx experiments=Dress_occ_smplx_baseline datamodule.dataloader.dataset_path=/home/ps/dy/dataset/S4d/00122_Inner -->

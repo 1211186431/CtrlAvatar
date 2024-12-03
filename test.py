@@ -1,6 +1,6 @@
 import torch
 import os
-from dataset.data_util import load_mesh, render_canonical,render_trimesh,setup_views
+from dataset.render_util import load_mesh, render_canonical,render_trimesh,setup_views
 from dataset.util import save_mesh,save_img,ensure_directory_exists
 from dataset.data_helper import load_meta_info,get_cond
 from pytorch3d.ops import knn_points
@@ -10,6 +10,7 @@ import tqdm
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
+from dataset.mesh import Mesh 
 
 def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,save_type='img'):
     model.eval()
@@ -25,11 +26,18 @@ def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,sa
             pts_c = model.pred_point(mesh_data['verts'],cond)
             def_verts = model.deform(pts_c,smpl_tfs)
             if save_type == 'image':
-                ## 渲染图片，512 8.3fps 1024 2.5FPS
-                mesh_albido = Meshes(def_verts, mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
-                for view,renderer in renderers.items():
-                    pred_img = render_trimesh(mesh_albido, renderer)
-                save_img(pred_img, save_dir + f'/test_{i}.png')
+                if hasattr(renderers,'items'):
+                    ## 渲染图片，512 8.3fps 1024 2.5FPS
+                    mesh_albido = Meshes(def_verts, mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
+                    for view,renderer in renderers.items():
+                        pred_img = render_trimesh(mesh_albido, renderer)
+                    save_img(pred_img, save_dir + f'/test_{i}.png')
+                else:
+                    # use nvidffrast
+                    mesh_albido = Mesh(def_verts[0], mesh_data['faces'][0],colors=pred_colors[0])
+                    pred_imgs = render_trimesh(mesh_albido, renderers,renderer_type='nvdiff')
+                    save_img(pred_imgs[-1], save_dir + f'/test_{i}.png')
+                    
             if save_type == 'mesh':
                 ## 保存mesh， 4fps 如果不保存 可以达到45fps
                 save_mesh(def_verts, mesh_data['faces'], torch.clamp(pred_colors, 0.0, 1.0), save_dir + f'/{i:04d}_def.ply')
@@ -46,7 +54,8 @@ def main(config):
     model_name = config['model_name']
     need_canonical = config['need_canonical']
     save_type = config['save_type']
-
+    renderer_type = config['renderer_type']
+    
     mesh_path = os.path.join(base_path, 'data',subject,'t_mesh',t_mesh_name)
     meta_info_path = os.path.join(base_path, 'data',subject,'meta_info.npz')
     model_path = os.path.join(base_path, 'outputs',model_mode,subject,'save_model',model_name)
@@ -55,7 +64,7 @@ def main(config):
     ensure_directory_exists(test_mesh_dir)
     ensure_directory_exists(test_img_dir)
     smplx_model_path = os.path.join(base_path, 'geometry/code/lib/smplx/smplx_model')
-    renderers = setup_views(image_size=image_size,views=views)
+    renderers = setup_views(image_size=image_size,views=views,renderer_type=renderer_type)
 
 
     verts,faces,normals = load_mesh(mesh_path)

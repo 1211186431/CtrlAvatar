@@ -4,6 +4,7 @@ data_path: '/home/ps/dy/dataset/SXHuman'
 K: 6
 gpu_id: 0
 geometry_model_path: 'geometry/outputs/XHumans_smplx/111_delta'
+renderer_type: 'pytorch3d'
 configs:
   test:
     model_mode: 'fit'

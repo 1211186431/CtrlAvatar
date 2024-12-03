@@ -33,11 +33,9 @@ class MyDataset(Dataset):
         self.smplx_ply_files = sorted([f for f in os.listdir(self.smplx_ply_dir) if f.endswith('.ply')])
         self.def_mesh_files = sorted([f for f in os.listdir(self.def_mesh_dir) if f.endswith('.ply')])
         self.gt_ply_files = sorted([f for f in os.listdir(self.gt_ply_dir) if f.endswith('.ply')])
+        
         if sample_num is not None and sample_num < len(self.pkl_files):
-            # 随机采样sample_num个元素
             indices = random.sample(range(len(self.pkl_files)), sample_num)
-            
-            # 使用采样的索引来获取对应的文件列表
             self.pkl_files = [self.pkl_files[i] for i in indices]
             self.smplx_ply_files = [self.smplx_ply_files[i] for i in indices]
             self.def_mesh_files = [self.def_mesh_files[i] for i in indices]
@@ -97,18 +95,3 @@ def get_color(def_mesh,gt_ply,smplx_ply,verts_ids):
         points,color,idx = set_color(def_mesh,gt_ply,smplx_ply,verts_ids)
     return points,color,idx
     
-if __name__ == '__main__':
-    pkl_dir = '/home/mycode2/t0618/data/00017/smplx_pkl'
-    img_dir = '/home/mycode2/t0618/data/00017/img_gt'
-    meta_path = '/home/X-Avatar/outputs/XHumans_smplx/00017_scan/meta_info.npz'
-    meta_info = load_meta_info(meta_path)
-    dataset = MyDataset(pkl_dir=pkl_dir, img_dir=img_dir,meta_info=meta_info)
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
-
-    # # To iterate over the data
-    # for i, data in enumerate(dataloader):
-    #     print(data['smplx_params'].shape)  # Process PKL data
-    #     print(data['images'].shape)    # Process images
-
-    smplx_p = load_smplx_params(pkl_dir,meta_info)
-    print(smplx_p.shape)

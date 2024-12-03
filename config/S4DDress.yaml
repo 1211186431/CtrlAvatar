@@ -3,18 +3,19 @@ base_path: '/home/ps/dy/CtrlAvatar'
 data_path: '/home/ps/dy/dataset/S4d'
 K: 6
 gpu_id: 0
+renderer_type: 'nvdiff' # pytorch3d or nvdiff
 geometry_model_path: 'geometry/outputs/Dress_smplx/00000'
 configs:
   test:
-    model_mode: 'fit'
+    model_mode: 'val'
     image_size: 1024
     views:
       - 'front'
-    t_mesh_name: 't_mesh.ply'
-    model_name: 'model_50.ckpt'
+    t_mesh_name: 't_mesh_2.ply'
+    model_name: 'model_20.ckpt'
     need_canonical: True
     save_type: 'mesh'  # 'image' or 'mesh'
-    pkl_dir: '/home/ps/dy/dataset/S4d/00000/test'
+    pkl_dir: '/home/ps/dy/dataset/S4d/00122_Inner/test'
   edit:
     image_size: 1024
     lr: 0.005
@@ -22,7 +23,7 @@ configs:
     t_mesh_name: 'mesh_pred.ply'
     model_name: 'model_500.ckpt'
   train:
-    image_size: 800
+    image_size: 2048
     pre_num_epochs: 200
     num_epochs: 500
     lr: 0.005

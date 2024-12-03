@@ -90,21 +90,10 @@ def find_k_closest_points_in_other_cloud(A, B, k):
     return distances.sqrt(), indices
 
 def weighted_color_average(point_color, index, distances):
-    # 使用索引从颜色张量中获取颜色，形成 (P, k, 3) 张量
     color_tensor = point_color[index]
-
-    # 将距离转换为权重，这里我们使用距离的倒数作为权重
-    # 为避免除以0的情况，我们加上一个小的常数
     weights = 1.0 / (distances + 1e-6)
-
-    # 标准化权重使得每个点的权重之和为1
     weights /= weights.sum(dim=1, keepdim=True)
-
-    # 计算加权平均颜色
-    # 由于 weights 是 (P, k) 而 color_tensor 是 (P, k, 3)，我们需要扩展权重的维度以进行乘法
     weighted_colors = weights.unsqueeze(2) * color_tensor
-
-    # 求和并得到最终的颜色张量，形状为 (P, 3)
     final_colors = weighted_colors.sum(dim=1)
 
     return final_colors

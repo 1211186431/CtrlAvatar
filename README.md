@@ -1,41 +1,55 @@
 # CtrlAvatar
+To address the challenges of lifelike and customizable avatar generation, we present **CtrlAvatar**, a real-time framework for generating controllable avatars using disentangled invertible networks. CtrlAvatar enables high-quality and user-driven avatar customization and generation.
+
+![teaser](assets/teaser.png)
+
+This codebase supports processing datasets such as [X-Humans](https://github.com/Skype-line/X-Avatar), [CustomHumans](https://github.com/custom-humans/editable-humans), and [4D-Dress](https://github.com/eth-ait/4d-dress).
+
+It also supports two renderer configurations: [PyTorch3D](https://github.com/facebookresearch/pytorch3d) and [Nvdiffrast](https://github.com/NVlabs/nvdiffrast).
+
+---
+
 ## Train Geometry
-训练几何 [具体流程](geometry/README.md)
+Refer to the [detailed guide](geometry/README.md) for training the geometry module.
 
+---
 
-## 数据预处理
-准备纹理数据
-```
+## Data Preprocessing
+Prepare texture data:
+```bash
 export PYTHONPATH=$PYTHONPATH:/home/ps/dy/CtrlAvatar
 
-python util/texture_process.py --config /home/ps/dy/OpenAvatar/config/S4DDress.yaml --subject 00122_Inner
+python util/texture_process.py --config /home/ps/dy/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
 ```
 
-## train
-1. 运行
+## Training
+To start training:
 ```
 python main.py --mode train --config /home/ps/dy/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
 ```
 
-## test
-修改 pkl_dir 为 xhuman中对应的 SMPLX 文件夹
+## Testing
+To test the model:
 ```
-bash script/test.sh
+python main.py --mode test --config /home/ps/dy/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
 ```
 
-## eval
-1. 保存多视角图片
+## Evaluation
+1. Save Multi-view Images
 ```
 python util/save_eval_data.py --subject 00016 --data_path /home/ps/dy/CtrlAvatar/outputs/test/00016/mesh_test --method Ctrl --out_dir /home/ps/dy/ctrl
 ```
 
-2. 计算指标
+2. Compute Metrics
 ```
 python evaluate.py --subject 00016 --gt_npy /home/ps/dy/eval_aaai25/eval0805/eval_gt/gt_00016.npy --pre_npy /home/ps/dy/eval_aaai25/eval0805/eval_ours/Ours_00016.npy --method Ctrl --out_dir /home/ps/dy
 ```
 
-## export video 
-1. 切换到有 ffmpeg的环境
+## Export Video
+1. Switch to an environment with ```ffmpeg``` installed, then run:
 ```
 python util/export_video.py
 ```
+
+## Acknowledgement
+This project builds upon the codes from the following excellent research works: [X-Avatar](https://github.com/Skype-line/X-Avatar), [SMPL-X](https://github.com/vchoutas/smplx),  [Editable-Humans](https://github.com/custom-humans/editable-humans), [HaveFun](https://github.com/TIM2015YXH/HaveFun), [Pytorch3d](https://github.com/facebookresearch/pytorch3d), [Nvidiffrast](https://github.com/NVlabs/nvdiffrast). We sincerely thank the authors for their incredible contributions.

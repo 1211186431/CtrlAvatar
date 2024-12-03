@@ -5,7 +5,7 @@ from model.loss import img_loss
 from pytorch3d.renderer.mesh import Textures
 from pytorch3d.structures import Meshes
 from model.color_net import MyColorNet
-from dataset.data_util import load_mesh, setup_views, render_trimesh
+from dataset.render_util import load_mesh, setup_views, render_trimesh
 from dataset.util import save_img, save_mesh,ensure_directory_exists
 from dataset.data_helper import load_meta_info
 from dataset.util import load_img
@@ -46,6 +46,7 @@ def main(config):
     num_epochs = config['num_epochs']
     t_mesh_name = config['t_mesh_name']
     model_name = config['model_name']
+    renderer_type = config['renderer_type']
 
     mesh_path = os.path.join(base_path, 'data',subject,'t_mesh',t_mesh_name)
     val_img_dir = os.path.join(base_path, 'outputs','edit',subject,'img_val')
@@ -62,7 +63,7 @@ def main(config):
     img_gt={'front':load_img(front_img_path)[1],'back':load_img(back_img_path)[1]}
 
     verts,faces,normals = load_mesh(mesh_path)
-    renderers = setup_views(views = ['front', 'back'],image_size=image_size,is_canonical=True)
+    renderers = setup_views(views = ['front', 'back'],image_size=image_size,is_canonical=True,renderer_type=renderer_type)
     model_path = os.path.join(base_path, 'outputs','val',subject,'save_model',model_name)
     model = MyColorNet(meta_info=meta_info,smpl_model_path=smplx_model_path,d_in_color=6).cuda()
     model.load_state_dict(torch.load(model_path))

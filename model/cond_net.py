@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 class condNet(nn.Module):
     def __init__(self,cond_dim=73,multires=4):
         super(condNet, self).__init__()

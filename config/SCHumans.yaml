@@ -3,6 +3,7 @@ subject: '00000'
 gpu_id: 0
 data_path: '/home/ps/dy/dataset/SCHuman'
 geometry_model_path: 'geometry/outputs/CHumans_smplx/00000_delta'
+renderer_type: 'pytorch3d'
 configs:
   test:
     model_mode: 'train'

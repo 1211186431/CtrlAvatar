@@ -9,7 +9,7 @@ parent_dir = os.path.dirname(current_file_path)
 project_root = os.path.dirname(parent_dir)
 sys.path.insert(0, project_root)
 
-from dataset.data_util import render_data
+from dataset.render_util import render_data
 from model.color_net import MyColorNet
 from dataset.data_helper import load_meta_info,load_smplx_data
 import torch
@@ -145,9 +145,6 @@ def process_def_mesh(source_dir):
             def_verts = model.deform(verts,smpl_tfs)
             mesh = trimesh.Trimesh(vertices=def_verts[0].cpu().numpy(), faces=t_mesh.faces)
             mesh.export(pkl_file.replace('smplx_pkl', 'def_mesh').replace('smplx','def').replace('.pkl', '.ply'))
-    
-
-
 
 def main(config):
     subject = config['subject']
@@ -172,7 +169,7 @@ def main(config):
         if len(obj_list) != 0:
             print("rendering obj files in "+str(image_size))
             for mesh_path,mesh_name in tqdm.tqdm(obj_list):
-                render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True)
+                render_data(mesh_path,out_img_dir,mesh_name,image_size=image_size,is_obj=True,renderer_type=config['renderer_type'])
     process_gt_files(data_dir,out_gt_dir)
     process_def_mesh(out_dir)
 
@@ -203,6 +200,7 @@ if __name__ == '__main__':
         'gpu_id': combined_config['gpu_id'],
         'image_size': image_size,
         'geometry_model_path': combined_config['geometry_model_path'],
+        'renderer_type': combined_config['renderer_type']
     }
     os.environ["CUDA_VISIBLE_DEVICES"] = str(config['gpu_id'])
     main(config)

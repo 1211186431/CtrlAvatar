@@ -5,7 +5,6 @@ from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 import tqdm
 import argparse
 import matplotlib.pyplot as plt
-# 计算 PSNR
 def calculate_psnr(gt_image, pred_image):
     mask_gt = gt_image[..., 3]
     mask_pred = pred_image[..., 3]
@@ -15,14 +14,11 @@ def calculate_psnr(gt_image, pred_image):
     psnr_value = 20 * np.log10(max_pixel / np.sqrt(mse))
     return psnr_value
 
-# 计算 SSIM 
 def calculate_ssim(gt_image, pred_image):
     ssim_value = structural_similarity(gt_image, pred_image, channel_axis=-1)
     return ssim_value
 
-# 计算 LPIPS
 def calculate_lpips(gt_image, pred_image, loss_fn):
-    # 转换为 RGB 图像
     gt_image_rgb = gt_image[:, :, :, :3]
     pred_image_rgb = pred_image[:, :, :, :3]
 
@@ -33,7 +29,6 @@ def calculate_lpips(gt_image, pred_image, loss_fn):
     return lpips_value.mean().item()
 
 def main(args):
-    # 读取 numpy 存储的矩阵
     gt_matrix = np.load(args.gt_npy)
     pred_matrix = np.load(args.pre_npy)
     if gt_matrix.shape != pred_matrix.shape:
@@ -41,11 +36,9 @@ def main(args):
     num_groups = gt_matrix.shape[0]
     num_views = gt_matrix.shape[1]
     views = ['front', 'back', 'left', 'right']
-
-    # 初始化 LPIPS 模型
+    
     loss_fn = lpips.LPIPS(net='alex').cuda()
 
-    # 存储结果
     psnr_values = []
     ssim_values = []
     lpips_values = []
@@ -71,7 +64,7 @@ def main(args):
             view_ssim_values[views[j]].append(ssim_value)
             view_lpips_values[views[j]].append(lpips_value)
 
-    # 计算所有组的平均值
+    # Calculate the average of all groups
     avg_psnr = np.mean(psnr_values)
     avg_ssim = np.mean(ssim_values)
     avg_lpips = np.mean(lpips_values)
@@ -80,7 +73,7 @@ def main(args):
     print(f"Overall Average SSIM: {avg_ssim}")
     print(f"Overall Average LPIPS: {avg_lpips}")
 
-    # 计算每个视角的平均值
+    # Calculate the average value for each perspective
     avg_view_psnr = {view: np.mean(values) for view, values in view_psnr_values.items()}
     avg_view_ssim = {view: np.mean(values) for view, values in view_ssim_values.items()}
     avg_view_lpips = {view: np.mean(values) for view, values in view_lpips_values.items()}
@@ -90,10 +83,10 @@ def main(args):
         print(f"{view.capitalize()} Average SSIM: {avg_view_ssim[view]}")
         print(f"{view.capitalize()} Average LPIPS: {avg_view_lpips[view]}")
 
-    # 将每组的结果保存为 numpy 数组
+    # Save the results of each group as a numpy array
     results_np = np.stack((psnr_values, ssim_values, lpips_values), axis=-1)
 
-    # 保存平均值
+    # Save the average value
     avg_results = {
         'results': results_np,
         'Overall_Average_PSNR': avg_psnr,

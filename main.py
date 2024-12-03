@@ -38,7 +38,8 @@ def main(mode,yaml_file_path,subject=None):
         'base_path': combined_config['base_path'],
         'K': combined_config['K'],
         'subject': combined_config['subject'],
-        'gpu_id': combined_config['gpu_id']
+        'gpu_id': combined_config['gpu_id'],
+        'renderer_type': combined_config['renderer_type']
     }
     os.environ["CUDA_VISIBLE_DEVICES"] = str(common_config['gpu_id'])
     configs = {
@@ -63,8 +64,8 @@ def main(mode,yaml_file_path,subject=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='color')
     parser.add_argument('--mode', type=str, help='mode', default='train')
-    parser.add_argument('--config', type=str, default='/home/ps/dy/CtrlAvatar/config/SXHumans.yaml')
-    parser.add_argument('--subject', type=str, default=None)
+    parser.add_argument('--config', type=str, default='/home/ps/dy/CtrlAvatar/config/S4DDress.yaml')
+    parser.add_argument('--subject', type=str, default="00122_Inner")
     args = parser.parse_args()
     
     main(mode=args.mode, yaml_file_path=args.config,subject=args.subject)
