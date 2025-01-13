@@ -1,6 +1,5 @@
 import os
 project_root = os.path.abspath(os.path.dirname(__file__))
-# 设置环境变量 PYTHONPATH
 os.environ["PYTHONPATH"] = project_root
 import random
 import numpy as np
@@ -9,6 +8,7 @@ from train import main as train_main
 from test import main as test_main
 from edit import main as edit_main
 from fit import main as fit_main
+from demo import main as demo_main
 import argparse
 from omegaconf import OmegaConf
 def seed_everything(seed=42):
@@ -42,12 +42,9 @@ def main(mode,yaml_file_path,subject=None):
         'renderer_type': combined_config['renderer_type']
     }
     os.environ["CUDA_VISIBLE_DEVICES"] = str(common_config['gpu_id'])
-    configs = {
-        'test': merge_with_common(common_config,combined_config['configs']['test']),
-        'edit': merge_with_common(common_config,combined_config['configs']['edit']),
-        'train': merge_with_common(common_config,combined_config['configs']['train']),
-        'fit': merge_with_common(common_config,combined_config['configs']['fit'])
-    }
+    configs = {}
+    for cfg_mode in combined_config['configs']:
+        configs[cfg_mode] = merge_with_common(common_config,combined_config['configs'][cfg_mode])
     if mode == 'train':
         train_config = configs['train']
         train_main(train_config)
@@ -60,6 +57,9 @@ def main(mode,yaml_file_path,subject=None):
     elif mode == 'fit':
         fit_config = configs['fit']
         fit_main(fit_config)
+    elif mode == 'demo':
+        demo_config = configs['demo']
+        demo_main(demo_config)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='color')

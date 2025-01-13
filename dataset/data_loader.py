@@ -2,12 +2,13 @@ import os
 import torch
 from torch.utils.data import Dataset, DataLoader
 from .util import load_img
-from .data_helper import load_meta_info,load_smplx_data
+from .data_helper import load_meta_info,load_smplx_data,load_demo_data
 from .split_scan import set_color
 import trimesh
 import joblib
 import random
 import glob
+import pickle as pkl
 class MyDataset(Dataset):
     def __init__(self, base_path,subject,meta_info,image_size=256,sample_num=None):
         """
@@ -76,6 +77,15 @@ def load_smplx_params(pkl_dir,meta_info):
         smplx_params_list.append(smplx_params)
     if len(smplx_params_list) == 0:
         return load_smplx_params_text(pkl_dir,meta_info)
+    return torch.stack(smplx_params_list)
+
+def load_motion_pkl(pkl_dir,meta_info):
+    data = pkl.load(open(pkl_dir, 'rb'), encoding='latin1')
+    motion_len = data['body_pose'].shape[0]
+    smplx_params_list = []
+    for i in range(motion_len):
+        smplx_params = load_demo_data(meta_info, data,i)
+        smplx_params_list.append(smplx_params)
     return torch.stack(smplx_params_list)
 
 def load_smplx_params_text(pkl_dir,meta_info):

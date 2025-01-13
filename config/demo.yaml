@@ -1,0 +1,22 @@
+subject: '00020'
+base_path: '/home/ps/data/dy/CtrlAvatar'
+data_path: '/home/ps/data/dy/dataset/SXHuman'
+K: 6
+gpu_id: 0
+geometry_model_path: ''
+renderer_type: 'nvdiff'
+configs:
+  demo:
+    model_path: 'data/00020/model_50.ckpt'
+    image_size: 1024
+    views:
+      - 'front'
+    t_mesh_name: 'mesh_pred.ply'  # mesh_pred_edit1.ply 
+    save_type: 'mesh'  # 'image' or 'mesh'
+    pkl_dir: '/home/ps/data/dy/emotion_smoothed.pkl'
+  edit:
+    image_size: 1024
+    lr: 0.005
+    num_epochs: 1000
+    t_mesh_name: 'mesh_pred.ply'
+    model_name: 'model_500.ckpt'

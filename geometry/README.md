@@ -2,11 +2,17 @@
 This guide explains the steps to complete geometry training tasks, including data preparation, processing, training, testing, and visualization. The code is modified based on [X-Avatar](https://github.com/Skype-line/X-Avatar).
 
 ## Data Preparation
-1. Download [SMPLX Model](https://smpl-x.is.tue.mpg.de)  
+1. Download [SMPLX Model(v1.1)](https://smpl-x.is.tue.mpg.de)  
+```
+mkdir geometry/code/lib/smplx/smplx_model/
+mv /path/to/SMPLX_FEMALE.npz geometry/code/lib/smplx/smplx_model/SMPLX_FEMALE.npz
+mv /path/to/SMPLX_MALE.npz geometry/code/lib/smplx/smplx_model/SMPLX_MALE.npz
+```
 
-2. Download [init_model](https://github.com/Skype-line/X-Avatar)  
-
-3. Move the downloaded files to the corresponding directories as required by the code.
+2. Download [init_model](https://github.com/Skype-line/X-Avatar) from [X-Avatar](https://github.com/Skype-line/X-Avatar)
+```
+mv /path/to/init_model geometry/code/init_model
+```
 
 ## SX-Humans Dataset
 1. Download [X-Humans](https://github.com/Skype-line/X-Avatar)  
@@ -21,7 +27,7 @@ bash pre_SXHumans.sh
 
 3. Training
 ```
-cd ../code
+cd geometry/code
 
 python train_delta.py subject=00016_delta datamodule=XHumans_scan_smplx experiments=XHumans_occ_smplx_delta datamodule.dataloader.dataset_path=/datapath
 ```
@@ -44,7 +50,7 @@ bash pre_SCHumans.sh
 
 3. Training
 ```
-cd ../code
+cd geometry/code
 
 python train_delta.py subject=00067_delta datamodule=CustomHumans_scan_smplx experiments=CHumans_occ_smplx_delta datamodule.dataloader.dataset_path=/datapath
 ```
@@ -68,7 +74,7 @@ bash pre_S4DDress.sh
 
 3. Training
 ```
-cd ../code
+cd geometry/code
 
 python train_delta.py subject=00122_Inner datamodule=Dress_scan_smplx experiments=Dress_occ_smplx_delta datamodule.dataloader.dataset_path=/datapath
 ```

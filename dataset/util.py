@@ -63,7 +63,7 @@ def save_img(pred_front_img,path):
     rgb_img.save(path)
     
 def save_mesh(verts,faces,pred_colors,path):
-    out_mesh = trimesh.Trimesh(vertices=verts[0].cpu().detach().numpy(), faces=faces[0].cpu().detach().numpy(),vertex_colors=(pred_colors[0]* 255).cpu().detach().numpy())
+    out_mesh = trimesh.Trimesh(vertices=verts[0].cpu().detach().numpy(), faces=faces[0].cpu().detach().numpy(),vertex_colors=(pred_colors[0]).cpu().detach().numpy())
     out_mesh.export(path)
     
 def ensure_directory_exists(directory):

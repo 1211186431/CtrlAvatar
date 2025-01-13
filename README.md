@@ -12,10 +12,18 @@ It also supports two renderer configurations: [PyTorch3D](https://github.com/fac
 ---
 
 ## Environment Dependencies
-This project provides a Conda configuration file `environment.yml` to create the environment. However, it may include unnecessary packages. Therefore, the `requirements.txt` file contains only the necessary dependencies, which can be installed using `pip`. Alternatively, you can use the environment configuration provided by [X-Avatar](https://github.com/Skype-line/X-Avatar), but some code modifications may be required.
+See [install](install.md). Alternatively, you can use the environment configuration provided by [X-Avatar](https://github.com/Skype-line/X-Avatar), but some code modifications may be required.
 
-## Demo
-Comming Soon
+## Quick Demo
+<p align="center"><img src="assets/edit1.gif" align="center"> <br></p>
+<!-- <p align="center"><img src="assets/edit2.gif" align="center"> <br></p> -->
+
+Download the [data](https://drive.google.com/drive/folders/1hZl5XgEOOc8MhcQfBRQRehCkK2xTRfto?usp=drive_link), extract it and move it to ```data/```. Please download the demo sequences from [X-Avatar](https://github.com/Skype-line/X-Avatar) and modify the ```pkl_dir``` in (demo.yaml)[config/demo.yaml].
+
+Then run:
+```
+python main.py --mode demo --config /home/ps/dy/CtrlAvatar/config/demo.yaml --subject 00020
+```
 
 
 ## Train Geometry
@@ -35,7 +43,7 @@ python util/texture_process.py --config /home/ps/dy/CtrlAvatar/config/S4DDress.y
 ## Training
 To start training:
 ```
-python main.py --mode train --config /home/ps/dy/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
+python main.py --mode train --config /workspace/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
 ```
 
 ## Testing
@@ -43,6 +51,10 @@ To test the model:
 ```
 python main.py --mode test --config /home/ps/dy/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
 ```
+
+## Edit
+Comming soon
+
 
 ## Evaluation
 1. Save Multi-view Images
@@ -55,7 +67,6 @@ python util/save_eval_data.py --subject 00016 --data_path /home/ps/dy/CtrlAvatar
 python evaluate.py --subject 00016 --gt_npy /home/ps/dy/eval_aaai25/eval0805/eval_gt/gt_00016.npy --pre_npy /home/ps/dy/eval_aaai25/eval0805/eval_ours/Ours_00016.npy --method Ctrl --out_dir /home/ps/dy
 ```
 
-## Edit
 
 ## Acknowledgement
 This project builds upon the codes from the following excellent research works: [X-Avatar](https://github.com/Skype-line/X-Avatar), [SMPL-X](https://github.com/vchoutas/smplx),  [Editable-Humans](https://github.com/custom-humans/editable-humans), [HaveFun](https://github.com/TIM2015YXH/HaveFun), [Pytorch3d](https://github.com/facebookresearch/pytorch3d), [Nvidiffrast](https://github.com/NVlabs/nvdiffrast). We sincerely thank the authors for their incredible contributions.

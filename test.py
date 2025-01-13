@@ -27,7 +27,6 @@ def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,sa
             def_verts = model.deform(pts_c,smpl_tfs)
             if save_type == 'image':
                 if hasattr(renderers,'items'):
-                    ## 渲染图片，512 8.3fps 1024 2.5FPS
                     mesh_albido = Meshes(def_verts, mesh_data['faces'], textures=Textures(verts_rgb=pred_colors))
                     for view,renderer in renderers.items():
                         pred_img = render_trimesh(mesh_albido, renderer)
@@ -39,7 +38,6 @@ def test(model, smplx_params_list,smplx_tfx_list,renderers,mesh_data,save_dir,sa
                     save_img(pred_imgs[-1], save_dir + f'/test_{i}.png')
                     
             if save_type == 'mesh':
-                ## 保存mesh， 4fps 如果不保存 可以达到45fps
                 save_mesh(def_verts, mesh_data['faces'], torch.clamp(pred_colors, 0.0, 1.0), save_dir + f'/{i:04d}_def.ply')
 
 def main(config):
@@ -91,9 +89,7 @@ def main(config):
     test(model, smplx_params_list,smplx_tfs_list,renderers,mesh_data,save_dir=save_dir,save_type=save_type)
     
     if need_canonical:
-        ## 保存tpose 颜色
         torch.cuda.empty_cache()
-        
         pred_colors = model.pred_color(torch.cat([mesh_data['verts'],mesh_data['normals']],dim=2))
         pred_colors = weighted_color_average(point_color=pred_colors[0], index=idx[0], distances=distances[0]).unsqueeze(0)
         save_mesh(verts, faces, torch.clamp(pred_colors, 0.0, 1.0), mesh_path.replace(t_mesh_name,'mesh_pred.ply'))
