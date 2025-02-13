@@ -1,0 +1,42 @@
+gpu_id: 0
+view_num: 1
+subject: '00122_Inner'
+geometry_path: '/home/ps/data/dy/CtrlAvatar/geometry/outputs/Dress_smplx/00122_Inner'
+data_path: '/home/ps/data/dy/aaaiplus/data'
+source_data_path: '/home/ps/data/dy/dataset/S4d'
+
+color:
+  n_input_dims: 3
+  n_output_dims: 3
+  encoder:
+    otype: 'HashGrid'
+    n_levels: 16
+    n_features_per_level: 2
+    log2_hashmap_size: 19
+    base_resolution: 16
+    per_level_scale: 1.4472692374403782
+
+  feature_mlp:
+    otype: 'VanillaMLP'
+    activation: 'ReLU'
+    output_activation: 'none'
+    n_neurons: 64
+    n_hidden_layers: 1
+
+normal:
+  n_input_dims: 3
+  n_output_dims: 3
+  encoder:
+    otype: 'HashGrid'
+    n_levels: 16
+    n_features_per_level: 2
+    log2_hashmap_size: 19
+    base_resolution: 16
+    per_level_scale: 1.4472692374403782
+
+  feature_mlp:
+    otype: 'VanillaMLP'
+    activation: 'ReLU'
+    output_activation: 'none'
+    n_neurons: 64
+    n_hidden_layers: 1
