@@ -159,7 +159,6 @@ kaolin
 *.npz
 .vscode/
 data/
-geometry/
 outputs/
 __pycache__/
 *.pyc

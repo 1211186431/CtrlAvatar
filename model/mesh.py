@@ -127,20 +127,20 @@ class Mesh:
         out_mesh.visual.material.ambient = [1.0, 1.0, 1.0]  # ka = 1
         out_mesh.visual.material.diffuse = [1.0, 1.0, 1.0]  # kd = 1
         out_mesh.visual.material.specular = [1.0, 1.0, 1.0]  # ks = 1
-        out_mesh.export(os.path.join(path,"mesh_with_texture.obj"))
+        out_mesh.export(path.replace(".obj", "_with_texture.obj"))
     
     def _export_without_texture(self, path):
         v_pos = self.v_pos.cpu().numpy()
         t_pos_idx = self.t_pos_idx.cpu().numpy()
         out_mesh = trimesh.Trimesh(vertices=v_pos, faces=t_pos_idx)
-        out_mesh.export(os.path.join(path,"mesh.obj"))
+        out_mesh.export(path)
         
     def _export_with_color(self, path):
         v_pos = self.v_pos.cpu().numpy()
         t_pos_idx = self.t_pos_idx.cpu().numpy()
         v_color = self.v_color.cpu().numpy() * 255
         out_mesh = trimesh.Trimesh(vertices=v_pos, faces=t_pos_idx, vertex_colors=v_color)
-        out_mesh.export(os.path.join(path,"mesh_with_color.obj"))
+        out_mesh.export(path.replace(".obj", "_with_color.obj"))
     
     def export(self, path):
         if self.is_normalized:
