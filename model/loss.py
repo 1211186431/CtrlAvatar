@@ -47,7 +47,7 @@ def ssim(x, y, window_size=11, sigma=1.5, C1=0.01**2, C2=0.03**2, size_average=T
 def img_loss(pred_img, gt_img):
     l2_loss = F.mse_loss(pred_img, gt_img)
     l1_loss = F.l1_loss(pred_img, gt_img)
-    if pred_img.dim == 3:
+    if len(pred_img.shape) == 3:
         x = pred_img.unsqueeze(0).permute(0, 3, 1, 2)
         y = gt_img.unsqueeze(0).permute(0, 3, 1, 2)
     else:

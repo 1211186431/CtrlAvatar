@@ -1,6 +1,6 @@
 subject: '00000'
-base_path: '/home/ps/dy/CtrlAvatar'
-data_path: '/home/ps/dy/dataset/S4d'
+base_path: '/home/ps/data/dy/CtrlAvatar'
+data_path: '/home/ps/data/dy/dataset/S4d'
 K: 6
 gpu_id: 0
 renderer_type: 'nvdiff' # pytorch3d or nvdiff

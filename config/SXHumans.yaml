@@ -1,6 +1,6 @@
 subject: '111'
-base_path: '/home/ps/dy/CtrlAvatar'
-data_path: '/home/ps/dy/dataset/SXHuman'
+base_path: '/home/ps/data/dy/CtrlAvatar'
+data_path: '/home/ps/data/dy/dataset/SXHuman'
 K: 6
 gpu_id: 0
 geometry_model_path: 'geometry/outputs/XHumans_smplx/111_delta'

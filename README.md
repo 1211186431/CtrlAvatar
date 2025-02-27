@@ -35,15 +35,13 @@ Prepare texture data:
 
 First, modify the `base_path` in the YAML files under the `config` directory to the current project path, and set the `data_path` to the corresponding dataset path. Then, run the following code:
 ```bash
-export PYTHONPATH=$PYTHONPATH:/home/ps/dy/CtrlAvatar
-
-python util/texture_process.py --config /home/ps/dy/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
+python util/texture_process.py --config ./config/S4DDress.yaml --subject 00122_Inner
 ```
 
 ## Training
 To start training:
 ```
-python main.py --mode train --config /workspace/CtrlAvatar/config/S4DDress.yaml --subject 00122_Inner
+python main.py --mode train --config ./config/S4DDress.yaml --subject 00122_Inner
 ```
 
 ## Testing

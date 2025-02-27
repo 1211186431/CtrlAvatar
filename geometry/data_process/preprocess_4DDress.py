@@ -144,11 +144,11 @@ def set_subj_data(dataset_dir, subj, outfit, output_dir, gender):
          
 if __name__ == "__main__":
     # set target subj_outfit_seq
-    DATASET_DIR = "/home/ps/dy/dataset/data"
+    DATASET_DIR = "/home/ps/data/dy/dataset/data"
     parser = argparse.ArgumentParser()
     parser.add_argument('--subj', default='00122', help='subj name')
     parser.add_argument('--outfit', default='Inner', help='outfit name')
     parser.add_argument('--gender', default='male', help='male or female')
-    parser.add_argument('--out', default='/home/ps/dy/dataset/S4d', help='output dir')
+    parser.add_argument('--out', default='/home/ps/data/dy/dataset/S4d', help='output dir')
     args = parser.parse_args()
     set_subj_data(dataset_dir=DATASET_DIR, subj=args.subj, outfit=args.outfit, output_dir=args.out , gender=args.gender)

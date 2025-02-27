@@ -40,16 +40,14 @@ def main(data_root,out_path,model_type):
         smplx_meshes = VariableTopologyMeshes.from_directory(data_root, name='Scan Mesh')
     v.scene.add(smplx_meshes)
 
-    #v.save_video(video_dir=out_path)
+    # v.save_video(video_dir=out_path)
     v.run()
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_root', type=str, default='/home/ps/dy/save_mesh/00016')
-    parser.add_argument('--out_root', type=str, default='/home/ps/dy/')
-    parser.add_argument('--subject', type=str, default='00016')
-    parser.add_argument('--method', type=str, default='Ours')
+    parser.add_argument('--data_root', type=str, default='/home/ps/data/dy/save_mesh/00016')
+    parser.add_argument('--out_root', type=str, default='/home/ps/data/dy/')
     parser.add_argument('--mode_type', type=str, default='ply')
     args = parser.parse_args()
-    out_path = osp.join(args.out_root,args.method+"_"+args.subject+".mp4")
+    out_path = osp.join(args.out_root,"out.mp4")
     main(data_root=args.data_root,out_path=out_path,model_type=args.mode_type)

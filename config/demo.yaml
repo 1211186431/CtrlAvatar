@@ -7,11 +7,11 @@ geometry_model_path: ''
 renderer_type: 'nvdiff'
 configs:
   demo:
-    model_path: 'data/00020/model_50.ckpt'
+    model_path: 'outputs/val/00020/save_model/model_60.ckpt'
     image_size: 1024
     views:
       - 'front'
-    t_mesh_name: 'mesh_pred.ply'  # mesh_pred_edit1.ply 
+    t_mesh_name: 'output.obj'  # mesh_pred_edit1.ply 
     save_type: 'mesh'  # 'image' or 'mesh'
     pkl_dir: '/home/ps/data/dy/emotion_smoothed.pkl'
   edit:

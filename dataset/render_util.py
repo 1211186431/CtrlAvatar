@@ -7,9 +7,12 @@ def load_mesh(path,return_texture=False):
     verts = torch.tensor(mesh.vertices, device='cuda', dtype=torch.float32)[None]
     faces = torch.tensor(mesh.faces, device='cuda')[None]
     normals = torch.tensor(mesh.vertex_normals, device='cuda', dtype=torch.float32)[None]
-    if return_texture:
-        textures = torch.tensor(mesh.visual.vertex_colors, device='cuda', dtype=torch.float32)[None] / 255 
-        return verts,faces,normals,textures[:,:,:3]
+    if return_texture :
+        if hasattr(mesh.visual,'vertex_colors'):
+            textures = torch.tensor(mesh.visual.vertex_colors, device='cuda', dtype=torch.float32)[None] / 255 
+            return verts,faces,normals,textures[:,:,:3]
+        else:
+            return verts,faces,normals,None
     return verts,faces,normals
 
 def render_trimesh(mesh,renderer,renderer_type='pytorch3d'):
