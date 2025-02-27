@@ -1,15 +1,16 @@
-from model.deformer.smplx_model import SMPLXModel
 from model.dataset import MeshDataset
 from model.renderer.camera import CameraManager
 from model.renderer.nvdiff_renderer import Nviff_renderer
 from model.deformer.deform import DeformMesh
+from model.deformer.smplx_model import SMPLXModel
 from model.networks.color_net import ColorNet
-from omegaconf import OmegaConf
 from model.trainer import Trainer
+from omegaconf import OmegaConf
 import os
+import argparse
 
 
-def launch(config):
+def launch(config,model_type='train'):
     config = OmegaConf.load(config)
     
     # load data path
@@ -32,7 +33,7 @@ def launch(config):
     config.logging.output_dir,
     config.test.test_out
     ]:
-        os.makedirs(path, exist_ok=True)  # 自动递归创建目录，存在则忽略
+        os.makedirs(path, exist_ok=True)
     
     smplx_model = SMPLXModel(smplx_model_path, meta_info_path)
 
@@ -42,25 +43,30 @@ def launch(config):
         iter_res=config.render.iter_res
     )
     
-    # train 
-    train_dataset = MeshDataset(source_data_path, smplx_model, model_type='train')
+    if model_type == 'train':
+        train_dataset = MeshDataset(source_data_path, smplx_model, model_type='train')
+            
+        trainer = Trainer(
+            config=config,
+            dataset=train_dataset,
+            renderer=renderer,
+            camera_manager=camera_manager
+        )
+        trainer.train()
         
-    trainer = Trainer(
-        config=config,
-        dataset=train_dataset,
-        renderer=renderer,
-        camera_manager=camera_manager
-    )
-
-    
-    # 开始训练
-    trainer.train()
-    
-    # test
-    test_dataset = MeshDataset(source_data_path, smplx_model, model_type='test')
-    trainer.set_dataset(test_dataset)
-    trainer.test()
+    elif model_type == 'test':
+        test_dataset = MeshDataset(source_data_path, smplx_model, model_type='test')
+        trainer = Trainer(
+            config=config,
+            dataset=test_dataset,
+            renderer=renderer,
+            camera_manager=camera_manager
+        )
+        trainer.test()
 
 if __name__ == "__main__":
-    config = "/home/ps/data/dy/aaaiplus/configs/base.yaml"
-    launch(config)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='configs/base.yaml')
+    parser.add_argument('--mode', type=str, default='train')
+    args = parser.parse_args()
+    launch(args.config,args.mode)
