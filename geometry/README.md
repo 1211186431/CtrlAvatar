@@ -9,7 +9,10 @@ mv /path/to/SMPLX_FEMALE.npz geometry/code/lib/smplx/smplx_model/SMPLX_FEMALE.np
 mv /path/to/SMPLX_MALE.npz geometry/code/lib/smplx/smplx_model/SMPLX_MALE.npz
 ```
 
-2. Download [init_model](https://github.com/Skype-line/X-Avatar) from [X-Avatar](https://github.com/Skype-line/X-Avatar)
+2. Download [human part labels](https://drive.google.com/file/d/1QMBspD0R6VEFV2qK-OGFB-946-aZlX0p/view?usp=drive_link)
+Download and extract the files, then move them to the `geometry/code/lib/smplx/smplx_model/` 
+
+3. Download [init_model](https://github.com/Skype-line/X-Avatar) from [X-Avatar](https://github.com/Skype-line/X-Avatar)
 ```
 mv /path/to/init_model geometry/code/init_model
 ```

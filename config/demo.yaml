@@ -1,4 +1,4 @@
-subject: '00020'
+subject: '00058'
 base_path: '/home/ps/data/dy/CtrlAvatar'
 data_path: '/home/ps/data/dy/dataset/SXHuman'
 K: 6
@@ -7,13 +7,13 @@ geometry_model_path: ''
 renderer_type: 'nvdiff'
 configs:
   demo:
-    model_path: 'outputs/val/00020/save_model/model_60.ckpt'
+    model_path: 'outputs/val/00058/save_model/model_500.ckpt'
     image_size: 1024
     views:
       - 'front'
-    t_mesh_name: 'output.obj'  # mesh_pred_edit1.ply 
+    t_mesh_name: 'mesh_pred.ply'  # mesh_pred_edit1.ply 
     save_type: 'mesh'  # 'image' or 'mesh'
-    pkl_dir: '/home/ps/data/dy/emotion_smoothed.pkl'
+    pkl_dir: '/home/ps/data/dy/mycode3/t0305/out_sample_180.pkl'
   edit:
     image_size: 1024
     lr: 0.005

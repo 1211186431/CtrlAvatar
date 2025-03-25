@@ -7,15 +7,15 @@ geometry_model_path: 'geometry/outputs/XHumans_smplx/111_delta'
 renderer_type: 'pytorch3d'
 configs:
   test:
-    model_mode: 'fit'
+    model_mode: 'val'
     image_size: 1024
     views:
       - 'front'
     t_mesh_name: 't_mesh.ply'
-    model_name: 'model_50.ckpt'
+    model_name: 'model_800.ckpt'
     need_canonical: True
-    save_type: 'mesh'  # 'image' or 'mesh'
-    pkl_dir: '/home/ps/dy/dataset/SXHuman/111/test'
+    save_type: 'image'  # 'image' or 'mesh'
+    pkl_dir: '/home/ps/data/dy/dataset/SXHuman/00086/test'
   edit:
     image_size: 1024
     lr: 0.005
