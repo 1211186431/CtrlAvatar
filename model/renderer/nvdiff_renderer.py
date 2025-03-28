@@ -71,25 +71,25 @@ class Nviff_renderer(nn.Module):
                 )
             elif type == "normals" :
                 # world
-                gb_normal,_ = dr.interpolate(mesh.v_nrm, rast, faces_int)
-                gb_normal = F.normalize(gb_normal, dim=-1)
-                mask = rast[..., 3:] > 0
-                gb_normal = torch.cat([gb_normal[:,:,:,1:2], gb_normal[:,:,:,2:3], gb_normal[:,:,:,0:1]], -1)
-                gb_normal_aa = torch.lerp(torch.zeros_like(gb_normal), (gb_normal + 1.0) / 2.0, mask.float())
-                img = dr.antialias(gb_normal_aa, rast, vertices_clip, faces_int)
+                # gb_normal,_ = dr.interpolate(mesh.v_nrm, rast, faces_int)
+                # gb_normal = F.normalize(gb_normal, dim=-1)
+                # mask = rast[..., 3:] > 0
+                # gb_normal = torch.cat([gb_normal[:,:,:,1:2], gb_normal[:,:,:,2:3], gb_normal[:,:,:,0:1]], -1)
+                # gb_normal_aa = torch.lerp(torch.zeros_like(gb_normal), (gb_normal + 1.0) / 2.0, mask.float())
+                # img = dr.antialias(gb_normal_aa, rast, vertices_clip, faces_int)
                 
                 ## camera
-                # w2c = camera.extrinsics.R 
-                # gb_normal, _ = dr.interpolate(mesh.v_nrm, rast, faces_int)  # [B, H, W, 3]
-                # B, H, W, _ = gb_normal.shape
-                # gb_normal = gb_normal.view(B, -1, 3)  # [B, H*W, 3]
-                # gb_normal = gb_normal[:, :, :, None]  # 扩展维度 -> [B, H*W, 3, 1]
-                # gb_normal_cam = torch.matmul(w2c[:, None, :, :], gb_normal)  # [B, H*W, 3, 1]
-                # gb_normal_cam = gb_normal_cam.squeeze(-1).view(B, H, W, 3)  # [B, H, W, 3]
-                # gb_normal_cam = F.normalize(gb_normal_cam, dim=-1)
-                # mask = rast[..., 3:] > 0 
-                # bg_normal = torch.zeros_like(gb_normal_cam) 
-                # img = torch.lerp(bg_normal, (gb_normal_cam + 1.0) / 2.0, mask.float())
+                w2c = camera.extrinsics.R 
+                gb_normal, _ = dr.interpolate(mesh.v_nrm, rast, faces_int)  # [B, H, W, 3]
+                B, H, W, _ = gb_normal.shape
+                gb_normal = gb_normal.view(B, -1, 3)  # [B, H*W, 3]
+                gb_normal = gb_normal[:, :, :, None]  # 扩展维度 -> [B, H*W, 3, 1]
+                gb_normal_cam = torch.matmul(w2c[:, None, :, :], gb_normal)  # [B, H*W, 3, 1]
+                gb_normal_cam = gb_normal_cam.squeeze(-1).view(B, H, W, 3)  # [B, H, W, 3]
+                gb_normal_cam = F.normalize(gb_normal_cam, dim=-1)
+                mask = rast[..., 3:] > 0 
+                bg_normal = torch.zeros_like(gb_normal_cam) 
+                img = torch.lerp(bg_normal, (gb_normal_cam + 1.0) / 2.0, mask.float())
                 if need_bg:
                     bg = torch.tensor([0.5, 0.5, 1.0], device=img.device, dtype=img.dtype) 
                     bg = bg.view(1, 1, 1, 3).expand_as(img)
@@ -100,6 +100,14 @@ class Nviff_renderer(nn.Module):
                 texc, texd = dr.interpolate(uvs, rast,faces_int,rast_db=rast_out_db, diff_attrs='all')
                 tex = mesh.texture.contiguous()
                 img = dr.texture(tex[None, ...], texc, uv_da=texd, filter_mode='linear-mipmap-linear',max_mip_level=9)
+                if need_bg:
+                    bg = torch.ones_like(img)
+                    alpha = (rast[..., -1:] > 0).float() 
+                    img = torch.lerp(bg, img, alpha)
+            elif type == "rgb_from_v_color":
+                vtx_color = mesh.v_color.contiguous()
+                color,_ = dr.interpolate(vtx_color, rast, faces_int,rast_db=None,diff_attrs=None)
+                img  = dr.antialias(color, rast, vertices_clip, faces_int)
                 if need_bg:
                     bg = torch.ones_like(img)
                     alpha = (rast[..., -1:] > 0).float() 
@@ -142,6 +150,29 @@ class Nviff_renderer(nn.Module):
         # normal_with_aa = dr.antialias(normal_with_bg, rast, vertices_clip, faces_int)  
         
         return {"mask":mask_aa,"rgb_from_texture": color_with_aa}
+    
+    def render_mesh(self, t_mesh, camera, iter_res):
+
+        
+        # predict color on canonical space points
+        geo_out =  self.color_net(t_mesh.v_pos)
+        v_color = torch.sigmoid(geo_out["features"])
+        
+        # Render RGB
+        rast, _, vertices_clip, faces_int = self.transform_and_rasterize(t_mesh, camera, iter_res)
+        color, _ = dr.interpolate(v_color, rast, faces_int, rast_db=None, diff_attrs=None)
+        bg_rgb = torch.ones_like(color) # white background
+        alpha = (rast[..., -1:] > 0).float()  
+        color_with_bg = torch.lerp(bg_rgb, color, alpha)
+        color_with_aa = dr.antialias(color_with_bg, rast, vertices_clip, faces_int)
+        
+        # Render Mask
+        mask = rast[..., 3:] > 0
+        mask_aa = dr.antialias(mask.float(), rast, vertices_clip, faces_int)
+        
+        return {"mask":mask_aa,"rgb_from_texture": color_with_aa}
+    
+    
     
     def export_texture(self, mesh, res=[4096,4096]):
         with torch.no_grad():

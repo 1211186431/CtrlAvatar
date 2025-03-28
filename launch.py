@@ -63,6 +63,16 @@ def launch(config,model_type='train'):
             camera_manager=camera_manager
         )
         trainer.test()
+        
+    elif model_type == 'edit':
+        edit_train_dataset = MeshDataset(config.edit.edit_images_path,None, model_type='edit')
+        trainer = Trainer(
+            config=config,
+            dataset=edit_train_dataset,
+            renderer=renderer,
+            camera_manager=camera_manager
+        )
+        trainer.edit_train()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -115,6 +115,8 @@ class Mesh:
         self.scale = mesh.scale
         self.offset = mesh.offset
         self.resize_matrix_inv = mesh.resize_matrix_inv
+    def set_v_color(self, v_color):
+        self.v_color = v_color
     
     def _export_with_texture(self, path):
         uv = self.v_tex.cpu().numpy()
@@ -156,11 +158,17 @@ def load_mesh(path, device="cuda:0"):
     mesh = trimesh.load(path)
     v_pos = torch.tensor(mesh.vertices, dtype=torch.float32, device=device)
     t_pos_idx = torch.tensor(mesh.faces, dtype=torch.long, device=device)
-    v_tex = torch.tensor(mesh.visual.uv, dtype=torch.float32, device=device)
-    v_tex[:, 1] = 1 - v_tex[:, 1]
-    transform = transforms.ToTensor()
-    texture = transform(mesh.visual.material.image).to(device).permute(1, 2, 0)
-    return Mesh(v_pos, t_pos_idx, v_tex, texture)
+    if hasattr(mesh.visual, "uv") and mesh.visual.uv is not None:
+        v_tex = torch.tensor(mesh.visual.uv, dtype=torch.float32, device=device)
+        v_tex[:, 1] = 1 - v_tex[:, 1]
+        transform = transforms.ToTensor()
+        texture = transform(mesh.visual.material.image).to(device).permute(1, 2, 0)
+        return Mesh(v_pos, t_pos_idx, v_tex, texture)
+    else:
+        v_color = torch.tensor(mesh.visual.vertex_colors, dtype=torch.float32, device=device)[...,:3] / 255
+        mesh = Mesh(v_pos, t_pos_idx)
+        mesh.set_v_color(v_color)
+        return mesh
 
 def load_mesh_by_dicts(mesh_data):
     batch_size = mesh_data["v_pos"].shape[0]

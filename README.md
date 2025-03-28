@@ -38,5 +38,24 @@ To start testing:
 python launch.py --mode test --config ./config/base.yaml
 ```
 
+## Edit cloth
+To begin with, render the trained mesh from four different viewpoints by executing:
+```
+PYTHONPATH=. python preprocessing/prepare_edit.py
+```
+
+Next, you can edit the target view images using any method  
+(**at least one view must be edited; editing both front and back views is recommended**).
+
+After editing, update the `edit.edit_images_path` field in `base.yaml` accordingly.  
+The image filenames should follow the format: `edit_{view}`, where `view` can be one of `[front, back, left, right]`
+
+Finally, run: 
+```
+python launch.py --mode edit
+```
+
+
+
 ## Acknowledgement
 This project builds upon the codes from the following excellent research works: [X-Avatar](https://github.com/Skype-line/X-Avatar), [SMPL-X](https://github.com/vchoutas/smplx),  [Editable-Humans](https://github.com/custom-humans/editable-humans), [HaveFun](https://github.com/TIM2015YXH/HaveFun), [Pytorch3d](https://github.com/facebookresearch/pytorch3d), [Nvidiffrast](https://github.com/NVlabs/nvdiffrast). We sincerely thank the authors for their incredible contributions.

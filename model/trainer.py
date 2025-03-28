@@ -95,16 +95,74 @@ class Trainer:
             if self.config.logging.save_interval > 0 and epoch % self.config.logging.save_interval == 0:
                 self.validate()
             self.current_epoch += 1
+    
+    def edit_train_epoch(self):
+        self.renderer.train()
+        total_loss = 0.0
+        
+        for data in self.dataloader:
+            self.optimizer.zero_grad()
             
-    def validate(self):
+            # get camera parameters
+            cameras = self.camera_manager.sample_camera(
+                "rotating", 
+                elev_list=[90, 270, 180, 0]
+            )
+            
+            t_mesh = copy.deepcopy(self.base_t_mesh)
+            render_img = self.renderer.render_mesh(t_mesh, cameras, [2048,2048])
+            
+            pred_rgb = render_img['rgb_from_texture']
+            
+            edit_list_mask = torch.tensor([0, 0, 0, 0], device=self.device)
+            gt_rgb_list = []
+            
+            view_names = {
+                'front_view_img' : 0, 
+                'back_view_img' : 1, 
+                'left_view_img' : 2, 
+                'right_view_img': 3
+            }
+            for view in data.keys():
+                i = view_names[view]
+                edit_list_mask[i] = 1
+                gt_rgb_list.append(data[view])
+            gt_rgb = torch.cat(gt_rgb_list, dim=0).to(self.device)
+            mask = render_img['mask'][edit_list_mask == 1]
+            
+            loss = self._compute_loss(pred_rgb[edit_list_mask == 1], gt_rgb, mask)
+            loss.backward()
+            self.optimizer.step()
+            
+            total_loss += loss.item()
+        
+        return total_loss / len(self.dataloader)
+    
+           
+    def edit_train(self):
+        self.base_t_mesh = self._load_base_mesh(self.config.edit.edit_mesh_path)
+        for epoch in range(self.current_epoch, self.config.edit.num_epochs):
+            epoch_loss = self.edit_train_epoch()
+            self._log_metrics(epoch, epoch_loss)
+            if self.config.logging.save_interval > 0 and epoch % self.config.logging.save_interval == 0:
+                self.validate("edit",90)
+            self.current_epoch += 1
+        t_mesh = copy.deepcopy(self.base_t_mesh)
+        texture_mesh = self.renderer.export_v_color(t_mesh)
+        texture_mesh.export(os.path.join(self.config.test.test_out,"edit_mesh.obj"))   
+        
+    def validate(self,model_type='train',elev=0):
         cameras_1 = self.camera_manager.sample_camera(
                 "rotating", 
-                elev_list=[0]
+                elev_list=[elev]
             )
         cameras = cameras_1
         data = next(iter(self.dataloader))
         t_mesh = copy.deepcopy(self.base_t_mesh)
-        render_img = self.renderer.render_def(t_mesh, data, cameras, self.config.render.iter_res)
+        if model_type == 'edit':
+            render_img = self.renderer.render_mesh(t_mesh, cameras, [512,512])
+        else:
+            render_img = self.renderer.render_def(t_mesh, data, cameras, self.config.render.iter_res)
         pred_rgb = render_img['rgb_from_texture']
         mask = render_img['mask']
         self._save_image(self.current_epoch, pred_rgb, mask)
